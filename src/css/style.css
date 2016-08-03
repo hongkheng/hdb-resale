@@ -426,10 +426,34 @@ body {
   background: #2f4f4f;
   padding: 1em 2vw;
   color: #fff;
+  display: flex;
+  justify-content: space-between;
 }
 
 .navlist {
   list-style: none;
   display: flex;
   margin: 0;
+  padding: 0;
+}
+
+.navlist li a {
+  text-decoration: none;
+  color: #fff;
+  margin: 0 1em;
+  padding: 0.25em 0;
+}
+
+.listType {
+  display: flex;
+}
+
+#chart-container {
+  min-height: 500px;
+}
+
+#map {
+  width: 100%;
+  height: 70vh;
+  min-height: 500px;
 }

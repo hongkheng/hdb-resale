@@ -1,4 +1,5 @@
 let autoprefixer = require('autoprefixer');
+let Webpack = require('webpack');
 
 module.exports = {
   entry: [
@@ -30,5 +31,6 @@ module.exports = {
   devServer: {
     contentBase: './dist',
     hot: true
-   }
+  },
+  plugins: [new Webpack.HotModuleReplacementPlugin()]
 };

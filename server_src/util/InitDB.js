@@ -1,5 +1,8 @@
 export default class {
   constructor () {
+     ***REMOVED***
+    ***REMOVED***
+    ***REMOVED***
     const dbURI = 'mongodb://' +
       process.env.HDBRESALE_MONGODB_USER + ':' +
       process.env.HDBRESALE_MONGODB_PASSWORD + '@' +

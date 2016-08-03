@@ -6,7 +6,7 @@ import InitDB from './util/InitDB.js'
 import {toSVY, eucliDist2} from './util/geometry'
 
 const app = express()
-const root = path.join(__dirname, '../public')
+const root = path.join(__dirname, '../dist')
 
 const db = new InitDB()
 const addressCache = {lastUpdate: Date.now()}

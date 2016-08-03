@@ -1,10 +1,40 @@
 import React from 'react';
 import maincss from './css/style.css';
 import { Link } from 'react-router';
+import 'whatwg-fetch';
 
 class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      townList: [],
+      chartType: ['Average', 'Min, Max & Median', 'Smoothed'],
+    };
+    this.loadDataIntoMeta();
+  }
+  /**
+   * Load data from MongDB
+   */
+  loadDataIntoMeta() {
+    console.log('retrieving data from MongoDB');
+    const url = window.location.protocol + '//' + window.location.host + '/list';
+    const headers = { Accept: 'application/json' };
+    window.fetch(url, headers)
+      .then(res => res.json())
+      .then(meta => {
+        window.meta = meta;
+        this.setState({townList: meta.townList });
+        console.log('meta loaded', window.meta);
+        // saving the data to sessionStorage?
+        //maybe saving to localstorage
+      }).catch(err => {
+        // on network error
+        console.log(err);
+      });
+  }
+
   componentDidMount() {
-      console.log('app', this.props);
+    console.log('app', this.props);
   }
   render() {
     return (
@@ -16,12 +46,47 @@ class App extends React.Component {
             <li><Link to="/about">About</Link></li>
           </ul>
           <div className="listType">
-
+            <p>Choose town & chart type</p>
+            <DropDownList collection={this.state.townList} name="town-selector"></DropDownList>
           </div>
         </header>
         {this.props.children}
         <footer>This is the footer</footer>
       </div>
+    );
+  }
+}
+
+App.propsType = {
+  selectedTown: React.PropTypes.string,
+  selectedChartType: React.PropTypes.string
+};
+
+App.defaultProps = {
+  selectedTown: 'Ang Mo Kio',
+  selectedChartType: 'Smoothed'
+};
+
+// TODO: extract to another file
+class ListItem extends React.Component {
+  render() {
+    return (<option value={this.props.value}>{this.props.value}</option>);
+  }
+}
+
+class DropDownList extends React.Component {
+  render() {
+    var listNodes = this.props.collection.map( (item, index) => {
+      return (
+        <ListItem value={item} key={index}/>
+      );
+    });
+    return (
+      <form>
+      <select name={this.props.name}>
+        {listNodes}
+      </select>
+      </form>
     );
   }
 }

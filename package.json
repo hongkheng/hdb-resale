@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start-prod": "npm run build & npm run start-server",
-    "start-dev": "webpack-dev-server --host 0.0.0.0 --port 9000 --progress --colors --hot --config ./webpack.config.js",
+    "start-dev": "webpack-dev-server --host 0.0.0.0 --port 9000 --progress --colors --inline --hot --config ./webpack.config.js",
     "start-server": "node server_dist/server.js",
     "build": "npm run clean & npm run build-server & npm run build-js",
     "build-server": "babel server_src --out-dir server_dist",
@@ -50,16 +50,19 @@
     "webpack-dev-server": "^1.14.1"
   },
   "dependencies": {
+    "body-parser": "^1.15.2",
     "express": "^4.14.0",
     "express-history-api-fallback": "^2.0.0",
     "jStat": "^1.5.3",
     "lodash.sortbyorder": "^3.4.4",
     "loess": "^1.3.1",
-    "mongoose": "^4.5.7",
+    "mongoose": "^4.5.8",
     "node-fetch": "^1.5.3",
+    "pouchdb": "^5.4.5",
     "proj4": "^2.3.14",
     "react": "^15.3.0",
     "react-dom": "^15.3.0",
-    "react-router": "^2.6.1"
+    "react-router": "^2.6.1",
+    "whatwg-fetch": "^1.0.0"
   }
 }
