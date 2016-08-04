@@ -3,7 +3,7 @@ import React from 'react';
 class About extends React.Component {
   render() {
     return(
-      <div className="about-content">
+      <main className="about-content">
 <section className="about">
   <h1>Visualization of HDB Resale Market</h1>
 
@@ -12,9 +12,7 @@ class About extends React.Component {
   </p>
 
   <p>
-    The two of us took a public dataset, the
-    <a href="https://data.gov.sg/dataset/resale-flat-prices" target="_parent">HDB Resale Flat Prices</a>,
-    and made use of the latest web technologies to present data in the most intuitive and
+    The two of us took a public dataset, the <a href="https://data.gov.sg/dataset/resale-flat-prices" target="_parent">HDB Resale Flat Prices</a>, and made use of the latest web technologies to present data in the most intuitive and
     accessible manner for the public to better understand trends in the HDB resale market.
     We design our app for the user to explore data from 2 perspectives: time and space.
     Data is presented in the form of:
@@ -51,16 +49,12 @@ class About extends React.Component {
 
   <h3>Average</h3>
   <p>
-    Markers represent average transaction price in that month while the error
-    bars captures the variance of data points around the mean. The length of
-    the error bars on each side equals one standard deviation which covers
-    ~70% of the distribution.
+    Markers represent average transaction price in that month while the error bars captures the variance of data points around the mean. The length of the error bars on each side equals one standard deviation which covers ~70% of the distribution.
   </p>
 
   <h3>Min, Max & Median</h3>
   <p>
-    Markers represent median transaction price while error bars connect to the
-    highest and lowest transacted prices.
+    Markers represent median transaction price while error bars connect to the highest and lowest transacted prices.
   </p>
 </section>
 
@@ -87,8 +81,7 @@ class About extends React.Component {
     <li>Click on button at the bottom will re-center the map.</li>
   </ul>
 </section>
-
-      </div>);
+</main>);
   }
 }
 

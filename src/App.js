@@ -46,12 +46,21 @@ class App extends React.Component {
             <li><Link to="/about">About</Link></li>
           </ul>
           <div className="listType">
-            <p>Choose town & chart type</p>
+            <p className="dropdown-title">Choose town & chart type</p>
             <DropDownList collection={this.state.townList} name="town-selector"></DropDownList>
           </div>
         </header>
         {this.props.children}
-        <footer>This is the footer</footer>
+        <footer>
+          <div className="footer-text">
+          Data retrieved <span className="retrieve-date"></span> from <a href="https://data.gov.sg/dataset/resale-flat-prices">data.gov.sg</a>.
+        </div>
+          <div className="footer-text">
+          Developed by <a href="https://github.com/yongjun21">Thong Yong Jun</a> &amp; <a href="https://github.com/caalberts">Albert Salim</a>.
+        </div>
+        <div className="footer-text">
+          <a className="footer-terms" href="#">Terms of Use</a>
+        </div></footer>
       </div>
     );
   }

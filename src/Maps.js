@@ -224,11 +224,11 @@ class Maps extends React.Component {
   render() {
     return (
       <main>
-        <h1>Property Hotspots in </h1>
-        <div id="chart-container">
+        <h1 className="chart-title">Property Hotspots in </h1>
+        <div className="chart-container">
           <div id="map" ref="map"></div>
         </div>
-        <div id="chart-detail"></div>
+        <div className="chart-detail"></div>
       </main>
     );
   }

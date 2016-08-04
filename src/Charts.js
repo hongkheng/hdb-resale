@@ -255,12 +255,12 @@ class Charts extends React.Component {
   render() {
     return (
       <main>
-        <h1 id="chart-title">Historial Trend of HDB Resale Prices in {this.state.selectedTown}</h1>
-        <div id="chart-container">
+        <h1 className="chart-title">Historial Trend of HDB Resale Prices in {this.state.selectedTown}</h1>
+        <div className="chart-container">
           <div ref="plotContainer" className="js-plotly-plot">
           </div>
         </div>
-        <div id="chart-detail"></div>
+        <div className="chart-detail"></div>
       </main>
       );
   }
