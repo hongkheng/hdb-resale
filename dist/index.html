@@ -11,7 +11,14 @@
   <!-- Plotly script -->
   <script defer src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   <!-- Google Maps script -->
-  <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZ7kA90kT6tiOfVciR1L8hK-avHkJLP3o&libraries=visualization"></script>
+  <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZ7kA90kT6tiOfVciR1L8hK-avHkJLP3o&libraries=visualization&callback=googleOnLoadCallback"></script>
+
+  <script>
+    window.googleOnLoadCallback = function(evt) {
+      window.googleMapsLoaded = true;
+      console.log('gm loaded');
+    }
+  </script>
 </head>
 <body>
   <div id="root"></div>

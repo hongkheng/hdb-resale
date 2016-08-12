@@ -1,19 +1,13 @@
 import React from 'react';
 import { withRouter } from 'react-router';
 import 'whatwg-fetch';
-import sortByOrder from 'lodash.sortbyorder'
-import { removeChildren, capitalizeFirstLetters, getMonthYear } from './helpers.js'
-window.PouchDB = require('pouchdb');
+import sortByOrder from 'lodash.sortbyorder';
+import { removeChildren, capitalizeFirstLetters, getMonthYear } from './helpers.js';
 
 class Maps extends React.Component {
   constructor() {
     super();
 
-    // TODO, temp state will be wired up with the dropdown menu
-    this.state = {
-      selectedMonth: '2016-06',
-      selectedFlat:'3 ROOM'
-    };
     this.db = window.PouchDB('resale') || new window.PouchDB('hdbresale');
 
   }
@@ -21,7 +15,7 @@ class Maps extends React.Component {
   plotHeatmap (month, flat) {
     this.db.get(month)
       .then(doc => {
-        this.renderData(doc)
+        this.renderData(doc, month, flat)
         if (doc.lastUpdate < window.meta.lastUpdate) {
           this.getData(month).then(dataPoints => {
             doc.dataPoints = dataPoints
@@ -29,7 +23,7 @@ class Maps extends React.Component {
             this.db.put(doc)
               .then(console.log.bind(console))
               .catch(console.error.bind(console))
-            this.renderData(doc)
+            this.renderData(doc, month, flat)
           })
         }
       })
@@ -46,7 +40,7 @@ class Maps extends React.Component {
           this.db.put(doc)
             .then(console.log.bind(console))
             .catch(console.error.bind(console))
-          this.renderData(doc)
+          this.renderData(doc, month, flat)
         })
       })
   }
@@ -65,15 +59,15 @@ class Maps extends React.Component {
     })
   }
 
-  renderData (dataObj) {
-    if (dataObj._id !== this.state.selectedMonth) {
+  renderData (dataObj, month, flat) {
+    if (dataObj._id !== month) {
       console.warn('overlapping queries')
       return
     }
 
     let dataPoints = []
-    if (this.state.selectedFlat !== 'ALL') {
-      dataPoints = dataObj.dataPoints[this.state.selectedFlat];
+    if (flat !== 'ALL') {
+      dataPoints = dataObj.dataPoints[flat];
     } else {
       for (let flat in dataObj.dataPoints) {
         dataPoints = dataPoints.concat(dataObj.dataPoints[flat])
@@ -204,27 +198,52 @@ class Maps extends React.Component {
   }
 
   componentDidMount() {
-    this.mapCenter = new window.google.maps.LatLng(1.352083, 103.819836);
-    this.map = new window.google.maps.Map(this.refs.map, {
-      center: this.mapCenter,
-      zoom: 11,
-      draggableCursor: 'pointer',
-      scrollwheel: false
-    });
+    // wait for google maps to load
+    let intervalID;
 
-    this.heatmap = new google.maps.visualization.HeatmapLayer({
-      radius: 7
-    });
+    intervalID = setInterval(function() {
+      if (window.googleMapsLoaded) {
+        clearInterval(intervalID);
+        // init google maps
+        this.mapCenter = new window.google.maps.LatLng(1.352083, 103.819836);
+        this.map = new window.google.maps.Map(this.refs.map, {
+          center: this.mapCenter,
+          zoom: 11,
+          draggableCursor: 'pointer',
+          scrollwheel: false
+        });
 
-    this.plotHeatmap(this.state.selectedMonth, this.state.selectedFlat);
+        this.heatmap = new google.maps.visualization.HeatmapLayer({
+          radius: 7
+        });
+
+        this.plotHeatmap(this.props.selectedMonth, this.props.selectedFlat);
+
+        this.heatmap.setMap(this.map);
+
+      }
+    }.bind(this), 500);
+
+    this.props.router.push({
+      pathname: '/maps/'+this.props.selectedMonth
+    });
+  }
+
+  shouldComponentUpdate(nextProps) {
+
+    if (this.props.selectedMonth === nextProps.selectedMonth && this.props.selectedFlat === nextProps.selectedFlat) {
+      return false;
+    }
+    this.plotHeatmap(nextProps.selectedMonth, nextProps.selectedFlat);
 
     this.heatmap.setMap(this.map);
+    return false;
   }
 
   render() {
     return (
       <main>
-        <h1 className="chart-title">Property Hotspots in </h1>
+        <h1 className="chart-title">Property Hotspots in {getMonthYear(this.props.selectedMonth)}</h1>
         <div className="chart-container">
           <div id="map" ref="map"></div>
         </div>
@@ -234,4 +253,14 @@ class Maps extends React.Component {
   }
 }
 
-export default Maps;
+Maps.propType = {
+  selectedMonth: React.PropTypes.string,
+  selectedFlat: React.PropTypes.string
+}
+
+Maps.defaultTypes = {
+  selectedMonth: '2016-06',
+  selectedFlat: 'ALL',
+}
+
+export default withRouter(Maps);

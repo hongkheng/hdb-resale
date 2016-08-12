@@ -10,7 +10,7 @@ window.PouchDB = require('pouchdb');
 ReactDOM.render((
   <Router history={browserHistory}>
     <Route path="/" component={App}>
-      <IndexRedirect to="/charts(/:town)" />
+      <IndexRedirect to="/charts" />
       <Route path="/charts(/:town)" component={Charts} checkPath="charts"/>
       <Route path="/maps(/:month)" component={Maps} checkPath="maps"/>
       <Route path="/about" component={About} />

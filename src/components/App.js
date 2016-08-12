@@ -62,7 +62,7 @@ class App extends React.Component {
     }
   }
   updateList1Selection(evt) {
-    console.log('updateSelection 1', evt.target.value);
+    //console.log('updateSelection 1', evt.target.value);
     if (this.props.routes[1].checkPath === 'charts') {
 
       this.setState({
@@ -84,7 +84,7 @@ class App extends React.Component {
     }
   }
   updateList2Selection(evt) {
-    console.log('updateSelection 2', evt.target.value);
+    //console.log('updateSelection 2', evt.target.value);
     if (this.props.routes[1].checkPath === 'charts') {
 
       this.setState({
@@ -111,8 +111,11 @@ class App extends React.Component {
       .then(res => res.json())
       .then(meta => {
         window.meta = meta;
-        this.setState({ meta: meta})
-
+        // set the latest month when loaded
+        this.setState({
+          meta: meta,
+          selectedMonth: meta.monthList[meta.monthList.length - 1]
+        });
         console.log('meta loaded', window.meta);
         // saving the data to sessionStorage?
         //maybe saving to localstorage
@@ -135,7 +138,9 @@ class App extends React.Component {
           </Navigation>
         {this.state.meta ? (this.props.children && React.cloneElement(this.props.children, {
           selectedTown: this.state.selectedTown,
-          selectedChartType: this.state.selectedChartType
+          selectedChartType: this.state.selectedChartType,
+          selectedMonth: this.state.selectedMonth,
+          selectedFlat: this.state.selectedFlat
         })) : null }
         <Footer {...this.props} ></Footer>
       </div>

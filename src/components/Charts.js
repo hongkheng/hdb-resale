@@ -262,7 +262,7 @@ class Charts extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     // first render won't be called
-    if (this.props.selectedTown === nextProps.selectedTown) {
+    if (this.props.selectedTown === nextProps.selectedTown && this.props.selectedChartType === nextProps.selectedTown) {
      return false;
     }
     const titleDOM = this.refs.chartTitle;
