@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Navigation from './Navigation';
 import Footer from './Footer';
+import Terms from './Terms';
 import { withRouter } from 'react-router';
 import maincss from '../css/style.css';
 import { Link } from 'react-router';
@@ -18,16 +19,30 @@ class App extends React.Component {
       selectedMonth: '2016-06',
       selectedFlat: 'ALL',
       selectedTitle: 'Choose Town & chart type',
-      lastUpdated: ''
+      hideTerms: true
     };
 
     this.updateList1Selection = this.updateList1Selection.bind(this);
     this.updateList2Selection = this.updateList2Selection.bind(this);
-
+    this.toggleTerms = this.toggleTerms.bind(this);
+    this.acceptTerms = this.acceptTerms.bind(this);
   }
 
   getRetrieveDate(date) {
     return date.slice(8, 10) + ' ' + getMonthYear(date);
+  }
+
+  toggleTerms(evt) {
+    this.setState({
+      hideTerms: !this.state.hideTerms
+    });
+
+  }
+
+  acceptTerms() {
+    this.setState({
+      hideTerms: true
+    })
   }
 
   passInList1OnPath(routes) {
@@ -143,7 +158,8 @@ class App extends React.Component {
           selectedMonth: this.state.selectedMonth,
           selectedFlat: this.state.selectedFlat
         })) : null }
-        <Footer {...this.props} retrieveDate={this.state.meta.lastUpdated}></Footer>
+        <Footer retrieveDate={this.state.meta.lastUpdate} handleAccept={this.toggleTerms}></Footer>
+        <Terms shouldHide={this.state.hideTerms} handleAccept={this.acceptTerms}></Terms>
       </div>
     );
   }
@@ -158,7 +174,7 @@ App.propsType = {
 App.defaultProps = {
   townList: [],
   chartType: ['Average', 'Min, Max & Median', 'Smoothed'],
-  flatType: ['ALL', '3 ROOM', '4 ROOM', '5 ROOM']
+  flatType: ['ALL', '3 ROOM', '4 ROOM', '5 ROOM'],
 };
 
 export default withRouter(App);

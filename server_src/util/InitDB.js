@@ -10,16 +10,16 @@ export default class {
 
     mongoose.connect(dbURI)
 
-    this.meta = mongoose.model('meta', new this.mongoose.Schema({
-      lastIdx: Number,
+    this.meta = mongoose.model('meta', new mongoose.Schema({
       lastUpdate: Date,
+      lastHeatmap: String,
       townList: [String],
       flatList: [String],
       monthList: [String],
       old_monthList: [String]
     }))
 
-    this.time_series = mongoose.model('time_series', new this.mongoose.Schema({
+    this.time_series = mongoose.model('time_series', new mongoose.Schema({
       town: String,
       flat_type: String,
       time_series: {
@@ -35,7 +35,7 @@ export default class {
       }
     }))
 
-    this.time_seriesOLD = mongoose.model('old_time_series', new this.mongoose.Schema({
+    this.time_seriesOLD = mongoose.model('old_time_series', new mongoose.Schema({
       town: String,
       flat_type: String,
       time_series: {
@@ -49,7 +49,7 @@ export default class {
       }
     }))
 
-    this.Address = mongoose.model('address', new this.mongoose.Schema({
+    this.Address = mongoose.model('address', new mongoose.Schema({
       town: String,
       street: String,
       block: String,
@@ -58,7 +58,7 @@ export default class {
       lat: Number
     }))
 
-    this.heatmap = mongoose.model('heatmap', new this.mongoose.Schema({
+    this.heatmap = mongoose.model('heatmap', new mongoose.Schema({
       flat_type: String,
       month: String,
       dataPoints: [{lng: Number, lat: Number, weight: Number}]
@@ -72,10 +72,22 @@ export default class {
     })
   }
 
+  updateMeta ({meta, msg}) {
+    meta.lastUpdate = new Date()
+    return this.meta.findOneAndUpdate({}, meta).exec(err => {
+      if (err) throw err
+    }).then(() => msg)
+  }
+
   getAddressBook () {
     return this.Address.find().exec((err) => {
       if (err) throw err
       console.log('Address book loaded')
     })
+  }
+
+  closeConnection () {
+    mongoose.disconnect()
+    console.log('Total time taken:', Date.now() - this.start)
   }
 }

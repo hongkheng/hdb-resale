@@ -526,9 +526,36 @@ footer {
   width: 100%;
   padding: 0.5em 0;
   box-sizing: border-box;
+  min-height: 40px;
 }
 
 .footer-text {
-  margin: 0.5em;
+  padding: 0.5em;
+  margin: 0;
   font-size: 0.6em;
+  box-sizing: border-box;
+}
+
+.footer-text a {
+  display: inline-block;
+  box-sizing: border-box;
+}
+
+.terms {
+  position: fixed;
+  top: 0;
+  z-index: 1;
+  background: #fff;
+  margin: 20vh 5vw 0;
+  padding: 5vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 2px solid #2f4f4f;
+}
+.terms p {
+  align-self: flex-start;
+}
+.terms.hidden {
+  display: none;
 }
