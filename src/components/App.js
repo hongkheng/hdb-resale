@@ -17,7 +17,8 @@ class App extends React.Component {
       selectedChartType: 'Smoothed',
       selectedMonth: '2016-06',
       selectedFlat: 'ALL',
-      selectedTitle: 'Choose Town & chart type'
+      selectedTitle: 'Choose Town & chart type',
+      lastUpdated: ''
     };
 
     this.updateList1Selection = this.updateList1Selection.bind(this);
@@ -142,7 +143,7 @@ class App extends React.Component {
           selectedMonth: this.state.selectedMonth,
           selectedFlat: this.state.selectedFlat
         })) : null }
-        <Footer {...this.props} ></Footer>
+        <Footer {...this.props} retrieveDate={this.state.meta.lastUpdated}></Footer>
       </div>
     );
   }
