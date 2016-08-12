@@ -1,19 +1,15 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import 'whatwg-fetch';
 import { withRouter } from 'react-router';
 import sortByOrder from 'lodash.sortbyorder'
 import { removeChildren, capitalizeFirstLetters, getMonthYear } from './helpers.js'
-window.PouchDB = require('pouchdb');
 
 // TODO add hooks to withRouter
 class Charts extends React.Component {
   constructor() {
     super();
-    // temp state before connecting to router
-    this.state = {
-      selectedTown: 'ANG MO KIO',
-      selectedChartType: 'Smoothed'
-    };
+
     this.layout = {
       hovermode: 'closest',
       autosize: true,
@@ -27,13 +23,24 @@ class Charts extends React.Component {
       }
     }
     this.db = new window.PouchDB('resale');
+
   }
 
-  plotChart(town) {
+  switchTitleOnSelection(chartType, town) {
+    if (chartType === 'Smoothed') {
+      return 'Historial Trend of HDB Resale Prices in ' + capitalizeFirstLetters(town);
+    } else if (chartType === 'Average') {
+      return 'Historical Average of HDB Resale Prices in ' + capitalizeFirstLetters(town);
+    } else {
+      return 'Range of Transacted Prices in ' + capitalizeFirstLetters(town) + ' (Min, Max & Median)';
+    }
+  }
+
+  plotChart(town, chartType) {
     this.db.get(town)
       .then(doc => {
         //console.log('hello', doc);
-        this.renderData(doc)
+        this.renderData(doc, chartType)
         if (doc.lastUpdate < window.meta.lastUpdate) {
           this.getData(town).then(datasets => {
             doc['Average'] = datasets[0]
@@ -42,7 +49,7 @@ class Charts extends React.Component {
             this.db.put(doc)
               .then(console.log.bind(console))
               .catch(console.error.bind(console))
-            this.renderData(doc)
+            this.renderData(doc, chartType)
           })
         }
       })
@@ -60,7 +67,7 @@ class Charts extends React.Component {
           this.db.put(doc)
             .then(console.log.bind(console))
             .catch(console.error.bind(console))
-          this.renderData(doc)
+          this.renderData(doc, chartType)
         })
       })
   }
@@ -152,13 +159,12 @@ class Charts extends React.Component {
     })
   }
 
-  renderData (dataObj) {
-    //console.log('rendering data', dataObj);
-    if (dataObj._id !== this.state.selectedTown) console.warn('overlapping queries')
+  renderData (dataObj, chartType) {
+    if (dataObj._id !== this.props.selectedTown) console.warn('overlapping queries')
     else {
       //this.loadingScreen.className = 'fa'
      // this.plotDiv.classList.remove('chart-loading')
-      Plotly.newPlot(this.refs.plotContainer, dataObj[this.state.selectedChartType], this.layout)
+      Plotly.newPlot(this.refs.plotContainer, dataObj[chartType], this.layout)
       // this.plotDiv.on('plotly_click', click => {
       //   if (!click.points[0].data.name) return
       //   this.listAllTransactions(this.town, click.points[0].data.name, click.points[0].x)
@@ -246,16 +252,31 @@ class Charts extends React.Component {
 
   componentDidMount() {
     // show loader
-    console.log('on mount', this.refs);
-
+    let pathTown = this.props.selectedTown.replace(/\s+|\/+/g, '-').toLowerCase();
+    this.props.router.push({
+      pathname: '/charts/'+pathTown
+    });
     // make a plotly container
-    this.plotChart(this.state.selectedTown);
+    this.plotChart(this.props.selectedTown, this.props.selectedChartType);
+  }
+
+  shouldComponentUpdate(nextProps) {
+    // first render won't be called
+    if (this.props.selectedTown === nextProps.selectedTown) {
+     return false;
+    }
+    const titleDOM = this.refs.chartTitle;
+    ReactDOM.findDOMNode(this.refs.chartTitle).innerHTML = this.switchTitleOnSelection(this.props.selectedChartType, nextProps.selectedTown);
+    this.plotChart(nextProps.selectedTown, nextProps.selectedChartType); // force chart to render
+
+    return false; // nothing will happen to React render
+
   }
 
   render() {
     return (
       <main>
-        <h1 className="chart-title">Historial Trend of HDB Resale Prices in {this.state.selectedTown}</h1>
+        <h1 className="chart-title" ref="chartTitle">{this.switchTitleOnSelection(this.props.selectedChartType, this.props.selectedTown)}</h1>
         <div className="chart-container">
           <div ref="plotContainer" className="js-plotly-plot">
           </div>
@@ -267,8 +288,16 @@ class Charts extends React.Component {
 
 }
 
-Charts.propsType = {
-  selectedTown: React.PropTypes.string
+Charts.propType = {
+  selectedTown: React.PropTypes.string,
+  selectedChartType: React.PropTypes.string,
+  chartTitle: React.PropTypes.string
+};
+
+Charts.defaultProps = {
+  selectedTown: 'ANG MO KIO',
+  selectedChartType: 'Smoothed',
+  chartTitle: 'Historial Trend of HDB Resale Prices in'
 };
 
 export default withRouter(Charts);

@@ -234,5 +234,4 @@ class Maps extends React.Component {
   }
 }
 
-
 export default Maps;

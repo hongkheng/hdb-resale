@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 export default class {
   constructor () {
      ***REMOVED***
@@ -8,10 +10,9 @@ export default class {
       process.env.HDBRESALE_MONGODB_PASSWORD + '@' +
       process.env.HDBRESALE_MONGODB_URL
 
-    this.mongoose = require('mongoose')
-    this.mongoose.connect(dbURI)
+    mongoose.connect(dbURI)
 
-    this.meta = this.mongoose.model('meta', new this.mongoose.Schema({
+    this.meta = mongoose.model('meta', new this.mongoose.Schema({
       lastIdx: Number,
       lastUpdate: Date,
       townList: [String],
@@ -20,7 +21,7 @@ export default class {
       old_monthList: [String]
     }))
 
-    this.time_series = this.mongoose.model('time_series', new this.mongoose.Schema({
+    this.time_series = mongoose.model('time_series', new this.mongoose.Schema({
       town: String,
       flat_type: String,
       time_series: {
@@ -36,7 +37,7 @@ export default class {
       }
     }))
 
-    this.time_seriesOLD = this.mongoose.model('old_time_series', new this.mongoose.Schema({
+    this.time_seriesOLD = mongoose.model('old_time_series', new this.mongoose.Schema({
       town: String,
       flat_type: String,
       time_series: {
@@ -50,7 +51,7 @@ export default class {
       }
     }))
 
-    this.Address = this.mongoose.model('address', new this.mongoose.Schema({
+    this.Address = mongoose.model('address', new this.mongoose.Schema({
       town: String,
       street: String,
       block: String,
@@ -59,7 +60,7 @@ export default class {
       lat: Number
     }))
 
-    this.heatmap = this.mongoose.model('heatmap', new this.mongoose.Schema({
+    this.heatmap = mongoose.model('heatmap', new this.mongoose.Schema({
       flat_type: String,
       month: String,
       dataPoints: [{lng: Number, lat: Number, weight: Number}]
