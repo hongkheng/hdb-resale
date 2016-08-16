@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+mongoose.Promise = Promise
+
 export default class {
   constructor () {
 

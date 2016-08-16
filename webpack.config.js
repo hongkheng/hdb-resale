@@ -1,11 +1,8 @@
-let autoprefixer = require('autoprefixer');
+var path = require('path');
+var autoprefixer = require('autoprefixer');
 
 module.exports = {
-  entry: [
-    'webpack-dev-server/client?http://0.0.0.0:9000',
-    'webpack/hot/only-dev-server',
-    './src/index.js'
-  ],
+  entry: './src/index.js',
   module: {
     loaders: [{
       test: /\.jsx?$/,
@@ -17,18 +14,14 @@ module.exports = {
     }]
   },
   postcss: function () {
-    return [autoprefixer]
+    return [autoprefixer];
   },
   resolve: {
     extensions: ['', '.js', '.jsx']
   },
   output: {
-    path: __dirname + '/dist',
+    path: path.join(__dirname, '/dist'),
     publicPath: '/',
     filename: 'bundle.js'
-  },
-  devServer: {
-    contentBase: './dist',
-    hot: true
-   }
+  }
 };
