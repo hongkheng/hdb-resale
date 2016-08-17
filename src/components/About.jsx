@@ -44,7 +44,7 @@ export default class About extends React.Component {
             <li>User can toggle between two modes: <b>Average</b> & <b>Min, Max & Median</b>.</li>
             <li>User chooses the <b>town</b> and returned chart is a set of time-series broken down by <b>flat types</b>.</li>
             <li>Click on any point on the chart to bring out a list of all the transactions
-            in the selcted tow"n for the month and flat type.</li>
+            in the selcted town for the month and flat type.</li>
           </ul>
 
           <h3>Average</h3>

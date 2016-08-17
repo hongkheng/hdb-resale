@@ -10,7 +10,7 @@ export default class Footer extends React.Component {
     return (
       <footer>
         <div className='footer-text'>
-          Data retrieved <span className='retrieve-date'>{parseDate(this.props.retrievedDate)}</span> from <a href='https://data.gov.sg/dataset/resale-flat-prices'>data.gov.sg</a>.
+          Data retrieved <span className='retrieve-date'>{parseDate(this.props.retrieveDate)}</span> from <a href='https://data.gov.sg/dataset/resale-flat-prices'>data.gov.sg</a>.
         </div>
         <div className='footer-text'>
           Developed by <a href='https://github.com/yongjun21'>Thong Yong Jun</a> &amp; <a href='https://github.com/caalberts'>Albert Salim</a>.

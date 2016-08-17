@@ -537,6 +537,7 @@ footer {
 }
 
 .footer-text a {
+  text-decoration: none;
   display: inline-block;
   box-sizing: border-box;
 }

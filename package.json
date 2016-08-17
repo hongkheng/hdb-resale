@@ -4,13 +4,16 @@
   "description": "React version of web visualization project",
   "main": "index.js",
   "scripts": {
-    "start-prod": "npm run build && npm run start-server",
-    "start-dev": "webpack-dev-server --host localhost --port 8080 --progress --colors --inline --hot --config ./webpack.config.js",
+    "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
+    "start:dev": "npm run build:dev && npm run start-server",
+    "start:prod": "npm run build:release && npm run start-server",
+    "webpack:dev": "webpack-dev-server --host 0.0.0.0 --port 9000 --progress --colors --hot --inline --config ./webpack.dev.config.js",
     "start-server": "node server_dist/server.js",
-    "build": "npm run clean && npm run build-server & npm run build-js",
+    "build:dev": "npm run clean && npm run build-server",
+    "build:release": "npm run clean && npm run build-server && npm run build-js",
     "build-server": "babel server_src --out-dir server_dist",
     "clean": "rm -rf server_dist",
-    "build-js": "webpack --progress --colors --config ./webpack.config.js"
+    "build-js": "webpack --progress --colors --config ./webpack.prod.config.js"
   },
   "contributors": [
     {
@@ -42,12 +45,13 @@
     "babel-preset-stage-2": "^6.13.0",
     "css-loader": "^0.23.1",
     "extract-text-webpack-plugin": "^1.0.1",
+    "if-env": "^1.0.0",
     "postcss-cssnext": "^2.7.0",
     "postcss-loader": "^0.9.1",
     "react-hot-loader": "^1.3.0",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.1",
-    "webpack-dev-server": "^1.14.1"
+    "webpack-dev-server": "^1.14.0"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
@@ -66,6 +70,9 @@
     "whatwg-fetch": "^1.0.0"
   },
   "semistandard": {
-    "global": ["Plotly", "google"]
+    "global": [
+      "Plotly",
+      "google"
+    ]
   }
 }
