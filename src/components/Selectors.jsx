@@ -6,11 +6,9 @@ export class DropDownList extends React.Component {
       <option key={index} value={item}>{item}</option>
     ));
     return (
-      <form className='dropdown-list'>
-        <select value={this.props.selectedValue} onChange={this.props.handleChange}>
-          {listNodes}
-        </select>
-      </form>
+      <select className='dropdown-select' value={this.props.selectedValue} onChange={this.props.handleChange}>
+        {listNodes}
+      </select>
     );
   }
 }
@@ -20,6 +18,7 @@ export class ChartSelector extends React.Component {
     return (
       <div className='listType'>
         <p className='dropdown-title'>Choose town & chart type</p>
+        <form className='dropdown-list'>
         <DropDownList
           selections={this.props.townList}
           selectedValue={this.props.selectedTown}
@@ -28,6 +27,7 @@ export class ChartSelector extends React.Component {
           selections={this.props.chartType}
           selectedValue={this.props.selectedChartType}
           handleChange={this.props.updateChartType} />
+        </form>
       </div>
     );
   }

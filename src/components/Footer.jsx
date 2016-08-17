@@ -8,7 +8,7 @@ function parseDate (date) {
 export default class Footer extends React.Component {
   render () {
     return (
-      <footer>
+      <footer className='footer'>
         <div className='footer-text'>
           Data retrieved <span className='retrieve-date'>{parseDate(this.props.retrieveDate)}</span> from <a href='https://data.gov.sg/dataset/resale-flat-prices'>data.gov.sg</a>.
         </div>
