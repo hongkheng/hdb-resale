@@ -230,6 +230,9 @@ export default class Maps extends React.Component {
         </h1>
         <div className='chart-container'>
           <div id='map' ref='map'></div>
+          <i ref='resetMap' id='reset-map' className='fa fa-crosshairs button'></i>
+          <button id='prev-month' className='button'>&lt;</button>
+          <button id='next-month' className='button'>&gt;</button>
         </div>
         <div className='chart-detail'></div>
       </main>

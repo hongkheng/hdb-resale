@@ -451,9 +451,10 @@ body {
 }
 
 main {
-  margin-top: 4em;
+  padding-top: 4em;
   box-sizing: border-box;
   flex: 1 0 auto;
+  box-sizing: border-box;
 }
 
 .navlist {
@@ -494,6 +495,7 @@ main {
 }
 
 .chart-container {
+  position: relative;
   min-height: 500px;
   display: flex;
   flex-direction: column;
@@ -532,6 +534,40 @@ main {
 .dropdown-list {
   display: inline-block;
   margin: 0;
+}
+
+.button {
+  position: absolute;
+  z-index: 1;
+  width: 7vh;
+  height: 7vh;
+  min-width: 50px;
+  min-height: 50px;
+  border: none;
+  background-color: #789;
+  opacity: 0.5;
+  color: #fff;
+}
+#reset-map {
+  bottom: 0;
+  left: 50%;
+  margin-left: -3.5vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#reset-map::before {
+  height: 1em;
+  width: 1em;
+  font-weight: lighter;
+}
+#prev-month {
+  top: 31.5vh;
+  left: 0;
+}
+#next-month {
+  top: 31.5vh;
+  right: 0;
 }
 
 .footer {
@@ -597,7 +633,7 @@ main {
   }
 
   main {
-    margin-top: 6em;
+    padding-top: 6em;
   }
 
   .chart-title {
