@@ -548,6 +548,34 @@ main {
   opacity: 0.5;
   color: #fff;
 }
+.loader-overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  min-height: 500px;
+  background: rgba(255, 255, 255, 0.5);
+}
+.loading {
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 50%;
+  width: 150px;
+  height: 150px;
+  font-size: 120px;
+  line-height: 150px;
+  text-align: center;
+  margin-left: -75px;
+  margin-top: -75px;
+  color: #2f4f4f;
+  opacity: 0.8;
+}
+.loading.fa-spinner {
+  z-index: 1;
+}
 #reset-map {
   bottom: 0;
   left: 50%;

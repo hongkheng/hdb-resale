@@ -1,13 +1,21 @@
 import React from 'react';
 import 'whatwg-fetch';
-// import sortByOrder from 'lodash.sortbyorder';
+import IconButton from './IconButton';
+import Loader from './Loader';
 import { getMonthYear } from './helpers.js';
 
 export default class Maps extends React.Component {
   constructor (props) {
     super(props);
+
+    this.state = {
+      isLoading: false
+    };
+
     this.plotHeatmap = this.plotHeatmap.bind(this);
     this.renderData = this.renderData.bind(this);
+    this.resetMap = this.resetMap.bind(this);
+
   }
 
   plotHeatmap (month, flatType) {
@@ -27,8 +35,9 @@ export default class Maps extends React.Component {
     })
     .catch(() => {
       this.heatmap.setData([]);
-      // this.loadingScreen.className = 'fa fa-spinner fa-pulse'
-      // this.mapDiv.classList.add('chart-loading')
+      this.setState({
+        isLoading: true
+      });
       this.getData(month).then(dataPoints => {
         const doc = {
           '_id': month,
@@ -84,6 +93,9 @@ export default class Maps extends React.Component {
     }));
     // this.loadingScreen.className = 'fa'
     // this.mapDiv.classList.remove('chart-loading')
+    this.setState({
+      isLoading: false
+    });
     this.heatmap.setData(ticks);
   }
 
@@ -230,9 +242,10 @@ export default class Maps extends React.Component {
         </h1>
         <div className='chart-container'>
           <div id='map' ref='map'></div>
-          <i ref='resetMap' id='reset-map' className='fa fa-crosshairs button'></i>
-          <button id='prev-month' className='button'>&lt;</button>
-          <button id='next-month' className='button'>&gt;</button>
+          <Loader hidden={!this.state.isLoading}></Loader>
+          <IconButton id='reset-map' icon='fa-crosshairs' handleClick={this.resetMap}></IconButton>
+          <IconButton id='prev-month' icon='fa-angle-left' handleClick={this.prevChart}></IconButton>
+          <IconButton id='next-month' icon='fa-angle-right' handleClick={this.nextChart}></IconButton>
         </div>
         <div className='chart-detail'></div>
       </main>

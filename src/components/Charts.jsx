@@ -1,11 +1,16 @@
 import React from 'react';
 import 'whatwg-fetch';
 import sortByOrder from 'lodash.sortbyorder';
+import Loader from './Loader';
 import { capitalizeFirstLetters } from './helpers.js';
 
 export default class Charts extends React.Component {
   constructor (props) {
     super(props);
+
+    this.state = {
+      isLoading: false
+    };
 
     this.layout = {
       hovermode: 'closest',
@@ -68,8 +73,9 @@ export default class Charts extends React.Component {
       }
     })
     .catch(() => {
-      // this.loadingScreen.className = 'fa fa-spinner fa-pulse'
-      // this.plotDiv.classList.add('chart-loading')
+      this.setState({
+        isLoading: true
+      });
       this.getData(town).then(datasets => {
         const doc = {
           '_id': town,
@@ -175,8 +181,9 @@ export default class Charts extends React.Component {
   renderData (dataObj, chartType) {
     if (dataObj._id !== this.props.selectedTown) console.warn('overlapping queries');
     else {
-      // this.loadingScreen.className = 'fa'
-      // this.plotDiv.classList.remove('chart-loading')
+      this.setState({
+        isLoading: false
+      });
       Plotly.newPlot(this.refs.plotContainer, dataObj[chartType], this.layout);
       // this.plotDiv.on('plotly_click', click => {
       //   if (!click.points[0].data.name) return
@@ -282,6 +289,7 @@ export default class Charts extends React.Component {
         </h1>
         <div className='chart-container'>
           <div ref='plotContainer' className='js-plotly-plot' />
+          <Loader hidden={!this.state.isLoading}></Loader>
         </div>
         <div className='chart-detail'></div>
       </main>

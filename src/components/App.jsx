@@ -22,6 +22,17 @@ class App extends React.Component {
     this.updateFlatType = this.updateFlatType.bind(this);
     this.toggleTerms = this.toggleTerms.bind(this);
     this.acceptTerms = this.acceptTerms.bind(this);
+    this.prevChart = this.prevChart.bind(this);
+    this.nextChart = this.nextChart.bind(this);
+
+  }
+
+  prevChart () {
+    console.log('prev', this.state);
+  }
+
+  nextChart () {
+    console.log('next', this.state);
   }
 
   toggleTerms (evt) {
