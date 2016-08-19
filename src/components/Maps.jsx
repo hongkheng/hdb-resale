@@ -15,7 +15,6 @@ export default class Maps extends React.Component {
     this.plotHeatmap = this.plotHeatmap.bind(this);
     this.renderData = this.renderData.bind(this);
     this.resetMap = this.resetMap.bind(this);
-
   }
 
   plotHeatmap (month, flatType) {
@@ -210,7 +209,7 @@ export default class Maps extends React.Component {
   // }
 
   componentDidMount () {
-    window.googleMapsLoaded.then(() => {
+    const initMap = () => {
       this.mapCenter = new google.maps.LatLng(1.352083, 103.819836);
       this.map = new google.maps.Map(this.refs.map, {
         center: this.mapCenter,
@@ -225,7 +224,9 @@ export default class Maps extends React.Component {
       this.heatmap.setMap(this.map);
 
       this.plotHeatmap(this.props.selectedMonth, this.props.selectedFlatType);
-    });
+    };
+    if (window.googleMapsLoaded) initMap();
+    else window.googleOnLoadCallback = initMap();
   }
 
   componentWillReceiveProps (nextProps) {
@@ -235,6 +236,11 @@ export default class Maps extends React.Component {
   }
 
   render () {
+    const monthList = this.props.monthList;
+    const currentMonthIndex = monthList.indexOf(this.props.selectedMonth);
+    const prevMonth = monthList[Math.max(0, currentMonthIndex - 1)];
+    const nextMonth = monthList[Math.min(monthList.length - 1, currentMonthIndex + 1)];
+
     return (
       <main>
         <h1 className='chart-title'>
@@ -242,10 +248,13 @@ export default class Maps extends React.Component {
         </h1>
         <div className='chart-container'>
           <div id='map' ref='map'></div>
-          <Loader hidden={!this.state.isLoading}></Loader>
-          <IconButton id='reset-map' icon='fa-crosshairs' handleClick={this.resetMap}></IconButton>
-          <IconButton id='prev-month' icon='fa-angle-left' handleClick={this.prevChart}></IconButton>
-          <IconButton id='next-month' icon='fa-angle-right' handleClick={this.nextChart}></IconButton>
+          <Loader hidden={!this.state.isLoading} />
+          <IconButton id='reset-map' icon='fa-crosshairs'
+            handleClick={this.resetMap} />
+          <IconButton id='prev-month' icon='fa-angle-left'
+            value={prevMonth} handleClick={this.props.updateMonth} />
+          <IconButton id='next-month' icon='fa-angle-right'
+            value={nextMonth} handleClick={this.props.updateMonth} />
         </div>
         <div className='chart-detail'></div>
       </main>
@@ -254,7 +263,9 @@ export default class Maps extends React.Component {
 }
 
 Maps.propType = {
+  monthList: React.PropTypes.arrayOf(React.PropTypes.string),
   selectedMonth: React.PropTypes.string,
   selectedFlatType: React.PropTypes.string,
-  lastUpdate: React.PropTypes.lastUpdate
+  lastUpdate: React.PropTypes.object,
+  updateMonth: React.PropTypes.func
 };

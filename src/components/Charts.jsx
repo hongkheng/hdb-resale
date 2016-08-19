@@ -26,19 +26,19 @@ export default class Charts extends React.Component {
     };
 
     if (window.matchMedia('(max-width: 900px)').matches) {
-      this.layout.width = 500
+      this.layout.width = 500;
       this.layout.legend = {
         x: 0.08,
         y: 0.92,
         xanchor: 'left',
         yanchor: 'top'
-      }
+      };
     } else {
-      this.layout.width = 700
+      this.layout.width = 700;
       this.layout.legend = {
         y: 0.5,
         yanchor: 'middle'
-      }
+      };
     }
 
     this.plotChart = this.plotChart.bind(this);
@@ -289,7 +289,7 @@ export default class Charts extends React.Component {
         </h1>
         <div className='chart-container'>
           <div ref='plotContainer' className='js-plotly-plot' />
-          <Loader hidden={!this.state.isLoading}></Loader>
+          <Loader hidden={!this.state.isLoading} />
         </div>
         <div className='chart-detail'></div>
       </main>

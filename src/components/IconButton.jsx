@@ -1,20 +1,19 @@
 import React from 'react';
 
 export default class IconButton extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-  render() {
+  render () {
     return (
-      <button id={this.props.id} className='button'>
-        <i aria-hidden='true' className={`fa ${this.props.icon}`} onClick={this.props.handleClick}></i>
+      <button id={this.props.id} className='button'
+        value={this.props.value} onClick={this.props.handleClick}>
+        <i aria-hidden='true' className={`fa ${this.props.icon}`}></i>
       </button>
     );
   }
 }
 
 IconButton.propType = {
+  value: React.PropTypes.string,
   handleClick: React.PropTypes.func,
   icon: React.PropTypes.icon,
-  id: React.PropTypes.id
+  id: React.PropTypes.string
 };

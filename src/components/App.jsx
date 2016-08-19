@@ -22,17 +22,6 @@ class App extends React.Component {
     this.updateFlatType = this.updateFlatType.bind(this);
     this.toggleTerms = this.toggleTerms.bind(this);
     this.acceptTerms = this.acceptTerms.bind(this);
-    this.prevChart = this.prevChart.bind(this);
-    this.nextChart = this.nextChart.bind(this);
-
-  }
-
-  prevChart () {
-    console.log('prev', this.state);
-  }
-
-  nextChart () {
-    console.log('next', this.state);
   }
 
   toggleTerms (evt) {
@@ -143,17 +132,23 @@ class App extends React.Component {
 
   render () {
     const selector = this.state.lastUpdate && (this.props.selector &&
-    React.cloneElement(this.props.selector, Object.assign({
-      updateTown: this.updateTown,
-      updateMonth: this.updateMonth,
-      updateChartType: this.updateChartType,
-      updateFlatType: this.updateFlatType
-    }, this.state)));
+      React.cloneElement(this.props.selector, Object.assign({
+        updateTown: this.updateTown,
+        updateMonth: this.updateMonth,
+        updateChartType: this.updateChartType,
+        updateFlatType: this.updateFlatType
+      }, this.state)));
+
+    const main = this.state.lastUpdate && (this.props.main &&
+      React.cloneElement(this.props.main, Object.assign({
+        updateTown: this.updateTown,
+        updateMonth: this.updateMonth
+      }, this.state)));
+
     return (
       <div className='container'>
         <Navigation {...this.state} selector={selector} />
-        {this.state.lastUpdate && (this.props.main &&
-        React.cloneElement(this.props.main, this.state))}
+        {main}
         <Footer retrieveDate={this.state.lastUpdate} handleAccept={this.toggleTerms} />
         {!this.state.hideTerms && <Terms handleAccept={this.acceptTerms} />}
       </div>
