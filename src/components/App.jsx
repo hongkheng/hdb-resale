@@ -100,6 +100,7 @@ class App extends React.Component {
 
   updateTown (evt) {
     const selectedTown = evt.target.value;
+    if (!selectedTown) return;
     this.props.router.push({
       pathname: '/charts/' + serialize(selectedTown),
       query: {type: serialize(this.state.selectedChartType)}
@@ -108,6 +109,7 @@ class App extends React.Component {
 
   updateMonth (evt) {
     const selectedMonth = evt.target.value;
+    if (!selectedMonth) return;
     this.props.router.push({
       pathname: '/maps/' + serialize(selectedMonth),
       query: {flat: serialize(this.state.selectedFlatType)}
@@ -116,6 +118,7 @@ class App extends React.Component {
 
   updateChartType (evt) {
     const selectedChartType = evt.target.value;
+    if (!selectedChartType) return;
     this.props.router.push({
       pathname: '/charts/' + serialize(this.state.selectedTown),
       query: {type: serialize(selectedChartType)}
@@ -124,6 +127,7 @@ class App extends React.Component {
 
   updateFlatType (evt) {
     const selectedFlatType = evt.target.value;
+    if (!selectedFlatType) return;
     this.props.router.push({
       pathname: '/maps/' + serialize(this.state.selectedMonth),
       query: {flat: serialize(selectedFlatType)}

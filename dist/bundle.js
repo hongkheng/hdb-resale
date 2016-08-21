@@ -66,21 +66,21 @@
 
 	var _Charts2 = _interopRequireDefault(_Charts);
 
-	var _Maps = __webpack_require__(374);
+	var _Maps = __webpack_require__(375);
 
 	var _Maps2 = _interopRequireDefault(_Maps);
 
-	var _About = __webpack_require__(379);
+	var _About = __webpack_require__(380);
 
 	var _About2 = _interopRequireDefault(_About);
 
-	var _Selectors = __webpack_require__(380);
+	var _Selectors = __webpack_require__(381);
 
-	__webpack_require__(381);
+	__webpack_require__(382);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	window.PouchDB = __webpack_require__(385);
+	window.PouchDB = __webpack_require__(386);
 
 	_reactDom2.default.render(_react2.default.createElement(
 	  _reactRouter.Router,
@@ -27307,6 +27307,7 @@
 	    key: 'updateTown',
 	    value: function updateTown(evt) {
 	      var selectedTown = evt.target.value;
+	      if (!selectedTown) return;
 	      this.props.router.push({
 	        pathname: '/charts/' + (0, _helpers.serialize)(selectedTown),
 	        query: { type: (0, _helpers.serialize)(this.state.selectedChartType) }
@@ -27316,6 +27317,7 @@
 	    key: 'updateMonth',
 	    value: function updateMonth(evt) {
 	      var selectedMonth = evt.target.value;
+	      if (!selectedMonth) return;
 	      this.props.router.push({
 	        pathname: '/maps/' + (0, _helpers.serialize)(selectedMonth),
 	        query: { flat: (0, _helpers.serialize)(this.state.selectedFlatType) }
@@ -27325,6 +27327,7 @@
 	    key: 'updateChartType',
 	    value: function updateChartType(evt) {
 	      var selectedChartType = evt.target.value;
+	      if (!selectedChartType) return;
 	      this.props.router.push({
 	        pathname: '/charts/' + (0, _helpers.serialize)(this.state.selectedTown),
 	        query: { type: (0, _helpers.serialize)(selectedChartType) }
@@ -27334,6 +27337,7 @@
 	    key: 'updateFlatType',
 	    value: function updateFlatType(evt) {
 	      var selectedFlatType = evt.target.value;
+	      if (!selectedFlatType) return;
 	      this.props.router.push({
 	        pathname: '/maps/' + (0, _helpers.serialize)(this.state.selectedMonth),
 	        query: { flat: (0, _helpers.serialize)(selectedFlatType) }
@@ -30526,6 +30530,10 @@
 	  value: true
 	});
 
+	var _stringify = __webpack_require__(281);
+
+	var _stringify2 = _interopRequireDefault(_stringify);
+
 	var _getPrototypeOf = __webpack_require__(317);
 
 	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
@@ -30556,7 +30564,11 @@
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _Loader = __webpack_require__(373);
+	var _Table = __webpack_require__(373);
+
+	var _Table2 = _interopRequireDefault(_Table);
+
+	var _Loader = __webpack_require__(374);
 
 	var _Loader2 = _interopRequireDefault(_Loader);
 
@@ -30573,7 +30585,12 @@
 	    var _this = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(Charts).call(this, props));
 
 	    _this.state = {
-	      isLoading: false
+	      isLoading: false,
+	      table: {
+	        title: '',
+	        colNames: [],
+	        rows: []
+	      }
 	    };
 
 	    _this.layout = {
@@ -30607,6 +30624,7 @@
 
 	    _this.plotChart = _this.plotChart.bind(_this);
 	    _this.renderData = _this.renderData.bind(_this);
+	    _this.listAllTransactions = _this.listAllTransactions.bind(_this);
 	    return _this;
 	  }
 
@@ -30627,7 +30645,7 @@
 	      var _this2 = this;
 
 	      this.props.db.get(town).then(function (doc) {
-	        _this2.renderData(doc, chartType);
+	        _this2.renderData(doc);
 	        if (doc.lastUpdate < _this2.props.lastUpdate) {
 	          _this2.getData(town).then(function (datasets) {
 	            doc['Average'] = datasets[0];
@@ -30635,7 +30653,7 @@
 	            doc['Smoothed'] = datasets[2];
 	            doc.lastUpdate = _this2.props.lastUpdate;
 	            _this2.props.db.put(doc).then(console.log.bind(console)).catch(console.error.bind(console));
-	            _this2.renderData(doc, chartType);
+	            _this2.renderData(doc);
 	          });
 	        }
 	      }).catch(function () {
@@ -30651,7 +30669,7 @@
 	            'Smoothed': datasets[2]
 	          };
 	          _this2.props.db.put(doc).then(console.log.bind(console)).catch(console.error.bind(console));
-	          _this2.renderData(doc, chartType);
+	          _this2.renderData(doc);
 	        });
 	      });
 	    }
@@ -30748,107 +30766,67 @@
 	    }
 	  }, {
 	    key: 'renderData',
-	    value: function renderData(dataObj, chartType) {
+	    value: function renderData(dataObj) {
+	      var _this3 = this;
+
 	      if (dataObj._id !== this.props.selectedTown) console.warn('overlapping queries');else {
+	        Plotly.newPlot(this.refs.plotContainer, dataObj[this.props.selectedChartType], this.layout);
+	        this.refs.plotContainer.on('plotly_click', function (click) {
+	          if (!click.points[0].data.name) return;
+	          _this3.listAllTransactions(_this3.props.selectedTown, click.points[0].data.name, click.points[0].x);
+	        });
 	        this.setState({
 	          isLoading: false
 	        });
-	        Plotly.newPlot(this.refs.plotContainer, dataObj[chartType], this.layout);
-	        // this.plotDiv.on('plotly_click', click => {
-	        //   if (!click.points[0].data.name) return
-	        //   this.listAllTransactions(this.town, click.points[0].data.name, click.points[0].x)
-	        // })
 	      }
 	    }
+	  }, {
+	    key: 'listAllTransactions',
+	    value: function listAllTransactions(town, flat_type, date) {
+	      var _this4 = this;
 
-	    // listAllTransactions (town, flat_type, date) {
-	    //   this.chartDetail = document.getElementById('chart-detail')
-	    //   const table = document.createElement('table')
-	    //
-	    //   const tableTitle = document.createElement('h2')
-	    //   tableTitle.id = 'chart-detail-title'
-	    //   tableTitle.innerHTML =
-	    //     'Transactions Records for ' + capitalizeFirstLetters(flat_type) +
-	    //     ' Flats <span>in ' + capitalizeFirstLetters(this.town) +
-	    //     ' in ' + getMonthYear(date) + '</span>'
-	    //   const thead = document.createElement('thead')
-	    //   const tr = document.createElement('tr')
-	    //   const headers = [
-	    //     '#',
-	    //     'Block',
-	    //     'Street Name',
-	    //     'Flat Type',
-	    //     'Storey Range',
-	    //     'Lease Commence',
-	    //     'Floor Area (sqm)',
-	    //     'Resale Price (SGD)'
-	    //   ]
-	    //
-	    //   headers.forEach(header => {
-	    //     const th = document.createElement('th')
-	    //     th.textContent = header
-	    //     tr.appendChild(th)
-	    //   })
-	    //   thead.appendChild(tr)
-	    //   table.appendChild(thead)
-	    //
-	    //   const resID = [
-	    //     '8c00bf08-9124-479e-aeca-7cc411d884c4',
-	    //     '83b2fc37-ce8c-4df4-968b-370fd818138b'
-	    //   ]
-	    //   const month = date.slice(0, 7)
-	    //   const resource =
-	    //     month < '2012-03' ? resID[0] : resID[1]
-	    //   const filters = {town, flat_type, month}
-	    //   const dataURL = 'https://data.gov.sg/api/action/datastore_search?resource_id=' +
-	    //     resource + '&filters=' + JSON.stringify(filters)
-	    //
-	    //   window.fetch(dataURL, { Accept: 'application/json' }).then(data => data.json())
-	    //     .then(json => {
-	    //       const tbody = document.createElement('tbody')
-	    //       tbody.setAttribute('id', 'table-body')
-	    //       sortByOrder(json.result.records, record => +record.resale_price, 'desc')
-	    //         .forEach((transaction, index) => {
-	    //           const row = document.createElement('tr')
-	    //           row.classList.add('table-striped')
-	    //           let rowData = [
-	    //             index + 1,
-	    //             transaction.block.trim(),
-	    //             capitalizeFirstLetters(transaction.street_name.trim()),
-	    //             transaction.flat_type.trim(),
-	    //             transaction.storey_range.trim().toLowerCase(),
-	    //             transaction.lease_commence_date,
-	    //             transaction.floor_area_sqm,
-	    //             (+transaction.resale_price).toLocaleString()
-	    //           ]
-	    //           rowData.map(data => {
-	    //             const td = document.createElement('td')
-	    //             td.textContent = data
-	    //             return td
-	    //           }).forEach(td => row.appendChild(td))
-	    //           tbody.appendChild(row)
-	    //         })
-	    //       table.appendChild(tbody)
-	    //
-	    //       removeChildren(this.chartDetail)
-	    //
-	    //       this.chartDetail.appendChild(tableTitle)
-	    //       this.chartDetail.appendChild(table)
-	    //
-	    //       document.getElementById('chart-detail-title').scrollIntoView()
-	    //     })
-	    // }
+	      // eslint-disable-line
+	      var resID = ['8c00bf08-9124-479e-aeca-7cc411d884c4', '83b2fc37-ce8c-4df4-968b-370fd818138b'];
+	      var month = date.slice(0, 7);
+	      var resource = month < '2012-03' ? resID[0] : resID[1];
+	      var filters = { town: town, flat_type: flat_type, month: month };
+	      var dataURL = 'https://data.gov.sg/api/action/datastore_search?resource_id=' + resource + '&filters=' + (0, _stringify2.default)(filters);
 
+	      window.fetch(dataURL, { Accept: 'application/json' }).then(function (data) {
+	        return data.json();
+	      }).then(function (json) {
+	        console.log(json);
+	        var title = 'Transactions Records for ' + (0, _helpers.capitalizeFirstLetters)(flat_type) + ' Flats <span>in ' + (0, _helpers.capitalizeFirstLetters)(town) + ' in ' + (0, _helpers.getMonthYear)(date) + '</span>';
+	        var colNames = ['#', 'Block', 'Street Name', 'Storey Range', 'Lease Commence', 'Floor Area (sqm)', 'Resale Price (SGD)'];
+
+	        var transactions = (0, _lodash2.default)(json.result.records, function (record) {
+	          return +record.resale_price;
+	        }, 'desc');
+	        var rows = transactions.map(function (transaction, index) {
+	          return [index + 1, transaction.block.trim(), (0, _helpers.capitalizeFirstLetters)(transaction.street_name.trim()), transaction.storey_range.trim().toLowerCase(), transaction.lease_commence_date, transaction.floor_area_sqm, (+transaction.resale_price).toLocaleString()];
+	        });
+
+	        _this4.setState({
+	          table: { title: title, colNames: colNames, rows: rows }
+	        });
+	      });
+	    }
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      // make a plotly container
 	      this.plotChart(this.props.selectedTown, this.props.selectedChartType);
 	    }
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
 	      if (this.props.selectedTown === nextProps.selectedTown && this.props.selectedChartType === nextProps.selectedChartType) return;
+	      this.setState({
+	        table: {
+	          title: '',
+	          colNames: [],
+	          rows: []
+	        }
+	      });
 	      this.plotChart(nextProps.selectedTown, nextProps.selectedChartType);
 	    }
 	  }, {
@@ -30868,7 +30846,7 @@
 	          _react2.default.createElement('div', { ref: 'plotContainer', className: 'js-plotly-plot' }),
 	          _react2.default.createElement(_Loader2.default, { hidden: !this.state.isLoading })
 	        ),
-	        _react2.default.createElement('div', { className: 'chart-detail' })
+	        _react2.default.createElement(_Table2.default, this.state.table)
 	      );
 	    }
 	  }]);
@@ -33490,6 +33468,130 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	var Table = function (_React$Component) {
+	  (0, _inherits3.default)(Table, _React$Component);
+
+	  function Table() {
+	    (0, _classCallCheck3.default)(this, Table);
+	    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(Table).apply(this, arguments));
+	  }
+
+	  (0, _createClass3.default)(Table, [{
+	    key: 'render',
+	    value: function render() {
+	      var colNames = this.props.colNames.map(function (colName, i) {
+	        return _react2.default.createElement(
+	          'th',
+	          { key: i },
+	          colName
+	        );
+	      });
+	      var rows = this.props.rows.map(function (r, i) {
+	        return _react2.default.createElement(
+	          'tr',
+	          { key: i },
+	          r.map(function (d, ii) {
+	            return _react2.default.createElement(
+	              'td',
+	              { key: ii },
+	              d
+	            );
+	          })
+	        );
+	      });
+
+	      var beforeContents = this.props.colNames.map(function (cn, i) {
+	        return '.chart-detail td:nth-of-type(' + (i + 1) + '):before { content: "' + cn + '"}';
+	      }).join('\n');
+
+	      var noBeforeContents = this.props.colNames.map(function (cn, i) {
+	        return '.chart-detail td:nth-of-type(' + (i + 1) + '):before { content: ""}';
+	      }).join('\n');
+
+	      var styleBlock = ['@media (max-width: 750px) {', beforeContents, '}', '@media (min-width: 751px) {', noBeforeContents, '}'];
+
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'chart-detail' },
+	        _react2.default.createElement(
+	          'style',
+	          null,
+	          styleBlock.join('\n')
+	        ),
+	        _react2.default.createElement('h2', { ref: 'title', dangerouslySetInnerHTML: { __html: this.props.title } }),
+	        _react2.default.createElement(
+	          'table',
+	          null,
+	          _react2.default.createElement(
+	            'thead',
+	            null,
+	            _react2.default.createElement(
+	              'tr',
+	              null,
+	              colNames
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'tbody',
+	            null,
+	            rows
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	  return Table;
+	}(_react2.default.Component);
+
+	exports.default = Table;
+
+
+	Table.propType = {
+	  title: _react2.default.PropTypes.string,
+	  colNames: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.string),
+	  rows: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.arrayOf(_react2.default.PropTypes.string))
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Table.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 374 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _getPrototypeOf = __webpack_require__(317);
+
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+	var _classCallCheck2 = __webpack_require__(320);
+
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+	var _createClass2 = __webpack_require__(321);
+
+	var _createClass3 = _interopRequireDefault(_createClass2);
+
+	var _possibleConstructorReturn2 = __webpack_require__(325);
+
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+	var _inherits2 = __webpack_require__(343);
+
+	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 	var Loader = function (_React$Component) {
 	  (0, _inherits3.default)(Loader, _React$Component);
 
@@ -33521,7 +33623,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Loader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 374 */
+/* 375 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -33532,7 +33634,19 @@
 	  value: true
 	});
 
-	var _getIterator2 = __webpack_require__(375);
+	var _assign = __webpack_require__(240);
+
+	var _assign2 = _interopRequireDefault(_assign);
+
+	var _promise = __webpack_require__(283);
+
+	var _promise2 = _interopRequireDefault(_promise);
+
+	var _stringify = __webpack_require__(281);
+
+	var _stringify2 = _interopRequireDefault(_stringify);
+
+	var _getIterator2 = __webpack_require__(376);
 
 	var _getIterator3 = _interopRequireDefault(_getIterator2);
 
@@ -33562,11 +33676,19 @@
 
 	__webpack_require__(355);
 
-	var _IconButton = __webpack_require__(378);
+	var _lodash = __webpack_require__(357);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var _Table = __webpack_require__(373);
+
+	var _Table2 = _interopRequireDefault(_Table);
+
+	var _IconButton = __webpack_require__(379);
 
 	var _IconButton2 = _interopRequireDefault(_IconButton);
 
-	var _Loader = __webpack_require__(373);
+	var _Loader = __webpack_require__(374);
 
 	var _Loader2 = _interopRequireDefault(_Loader);
 
@@ -33583,11 +33705,17 @@
 	    var _this = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(Maps).call(this, props));
 
 	    _this.state = {
-	      isLoading: false
+	      isLoading: false,
+	      table: {
+	        title: '',
+	        colNames: [],
+	        rows: []
+	      }
 	    };
 
 	    _this.plotHeatmap = _this.plotHeatmap.bind(_this);
 	    _this.renderData = _this.renderData.bind(_this);
+	    _this.listAllTransactions = _this.listAllTransactions.bind(_this);
 	    _this.resetMap = _this.resetMap.bind(_this);
 	    return _this;
 	  }
@@ -33598,13 +33726,13 @@
 	      var _this2 = this;
 
 	      this.props.db.get(month).then(function (doc) {
-	        _this2.renderData(doc, month, flatType);
+	        _this2.renderData(doc);
 	        if (doc.lastUpdate < _this2.props.lastUpdate) {
 	          _this2.getData(month).then(function (dataPoints) {
 	            doc.dataPoints = dataPoints;
 	            doc.lastUpdate = _this2.props.lastUpdate;
 	            _this2.props.db.put(doc).then(console.log.bind(console)).catch(console.error.bind(console));
-	            _this2.renderData(doc, month, flatType);
+	            _this2.renderData(doc);
 	          });
 	        }
 	      }).catch(function () {
@@ -33619,7 +33747,7 @@
 	            'dataPoints': dataPoints
 	          };
 	          _this2.props.db.put(doc).then(console.log.bind(console)).catch(console.error.bind(console));
-	          _this2.renderData(doc, month, flatType);
+	          _this2.renderData(doc);
 	        });
 	      });
 	    }
@@ -33666,20 +33794,21 @@
 	    }
 	  }, {
 	    key: 'renderData',
-	    value: function renderData(dataObj, month, flatType) {
-	      if (dataObj._id !== month) {
+	    value: function renderData(dataObj) {
+	      if (dataObj._id !== this.props.selectedMonth) {
 	        console.warn('overlapping queries');
 	        return;
 	      }
 
 	      var dataPoints = [];
-	      if (flatType !== 'ALL') {
-	        dataPoints = dataObj.dataPoints[flatType];
+	      if (this.props.selectedFlatType !== 'ALL') {
+	        dataPoints = dataObj.dataPoints[this.props.selectedFlatType];
 	      } else {
-	        for (var ft in dataObj.dataPoints) {
-	          dataPoints = dataPoints.concat(dataObj.dataPoints[ft]);
+	        for (var flatType in dataObj.dataPoints) {
+	          dataPoints = dataPoints.concat(dataObj.dataPoints[flatType]);
 	        }
 	      }
+
 	      if (dataPoints.length === 0) {
 	        console.warn('no data');
 	        return;
@@ -33691,12 +33820,11 @@
 	          weight: tick.weight
 	        };
 	      });
-	      // this.loadingScreen.className = 'fa'
-	      // this.mapDiv.classList.remove('chart-loading')
+	      this.heatmap.setData(ticks);
+
 	      this.setState({
 	        isLoading: false
 	      });
-	      this.heatmap.setData(ticks);
 	    }
 	  }, {
 	    key: 'resetMap',
@@ -33704,132 +33832,106 @@
 	      this.map.setCenter(this.mapCenter);
 	      this.map.setZoom(11);
 	    }
+	  }, {
+	    key: 'listAllTransactions',
+	    value: function listAllTransactions(lat, lng, month, flat_type) {
+	      var _this3 = this;
 
-	    // listAllTransactions (lat, lng, month, flat_type) {
-	    //   const url = window.location.protocol + '//' + window.location.host + '/nearby'
-	    //   window.fetch(url, {
-	    //     method: 'POST',
-	    //     headers: {
-	    //       'Accept': 'application/json',
-	    //       'Content-Type': 'application/json'
-	    //     },
-	    //     body: JSON.stringify({lat, lng, radius: 500})
-	    //   }).then(res => res.json()).then(json => {
-	    //     if (!json.length) {
-	    //       removeChildren(this.chartDetail)
-	    //       console.log('No result around selected location')
-	    //       return
-	    //     }
-	    //
-	    //     const resID = [
-	    //       '8c00bf08-9124-479e-aeca-7cc411d884c4',
-	    //       '83b2fc37-ce8c-4df4-968b-370fd818138b'
-	    //     ]
-	    //     const resource =
-	    //       month < '2012-03' ? resID[0] : resID[1]
-	    //     Promise.all(json.map(street_name => {
-	    //       const filters = {street_name, month}
-	    //       if (flat_type !== 'ALL') Object.assign(filters, {flat_type})
-	    //       const dataURL = 'https://data.gov.sg/api/action/datastore_search?resource_id=' +
-	    //         resource + '&filters=' + JSON.stringify(filters)
-	    //       return window.fetch(dataURL, { Accept: 'application/json' })
-	    //         .then(data => data.json())
-	    //     }))
-	    //     .then(results => results.reduce((records, res) => {
-	    //       if (res.result && res.result.records) {
-	    //         return records.concat(res.result.records)
-	    //       } else {
-	    //         return records
-	    //       }
-	    //     }, []))
-	    //     .then(records => {
-	    //       if (!json.length) {
-	    //         removeChildren(this.chartDetail)
-	    //         console.log('No result around selected location')
-	    //         return
-	    //       }
-	    //       this.chartDetail = document.getElementById('chart-detail')
-	    //       const table = document.createElement('table')
-	    //
-	    //       const tableTitle = document.createElement('h2')
-	    //       tableTitle.id = 'chart-detail-title'
-	    //       tableTitle.innerHTML =
-	    //         'Transactions Records in ' + getMonthYear(month) + ' around selected location'
-	    //       const thead = document.createElement('thead')
-	    //       const tr = document.createElement('tr')
-	    //       const headers = [
-	    //         '#',
-	    //         'Block',
-	    //         'Street Name',
-	    //         'Flat Type',
-	    //         'Storey Range',
-	    //         'Lease Commence',
-	    //         'Floor Area (sqm)',
-	    //         'Resale Price (SGD)'
-	    //       ]
-	    //
-	    //       headers.forEach(header => {
-	    //         const th = document.createElement('th')
-	    //         th.textContent = header
-	    //         tr.appendChild(th)
-	    //       })
-	    //       thead.appendChild(tr)
-	    //       table.appendChild(thead)
-	    //       const tbody = document.createElement('tbody')
-	    //       tbody.setAttribute('id', 'table-body')
-	    //       sortByOrder(records, record => +record.resale_price, 'desc')
-	    //         .forEach((transaction, index) => {
-	    //           const row = document.createElement('tr')
-	    //           row.classList.add('table-striped')
-	    //           let rowData = [
-	    //             index + 1,
-	    //             transaction.block.trim(),
-	    //             capitalizeFirstLetters(transaction.street_name.trim()),
-	    //             transaction.flat_type.trim(),
-	    //             transaction.storey_range.trim().toLowerCase(),
-	    //             transaction.lease_commence_date,
-	    //             transaction.floor_area_sqm,
-	    //             (+transaction.resale_price).toLocaleString()
-	    //           ]
-	    //           rowData.map(data => {
-	    //             const td = document.createElement('td')
-	    //             td.textContent = data
-	    //             return td
-	    //           }).forEach(td => row.appendChild(td))
-	    //           tbody.appendChild(row)
-	    //         })
-	    //       table.appendChild(tbody)
-	    //
-	    //       removeChildren(this.chartDetail)
-	    //
-	    //       this.chartDetail.appendChild(tableTitle)
-	    //       this.chartDetail.appendChild(table)
-	    //
-	    //       document.getElementById('chart-detail-title').scrollIntoView()
-	    //     })
-	    //   })
-	    // }
+	      //eslint-disable-line
+	      var url = window.location.protocol + '//' + window.location.host + '/nearby';
+	      window.fetch(url, {
+	        method: 'POST',
+	        headers: {
+	          'Accept': 'application/json',
+	          'Content-Type': 'application/json'
+	        },
+	        body: (0, _stringify2.default)({ lat: lat, lng: lng, radius: 500 })
+	      }).then(function (res) {
+	        return res.json();
+	      }).then(function (json) {
+	        if (!json.length) {
+	          _this3.setState({
+	            table: {
+	              title: '',
+	              colNames: [],
+	              rows: []
+	            }
+	          });
+	          console.log('No result around selected location');
+	          return;
+	        }
 
+	        var resID = ['8c00bf08-9124-479e-aeca-7cc411d884c4', '83b2fc37-ce8c-4df4-968b-370fd818138b'];
+	        var resource = month < '2012-03' ? resID[0] : resID[1];
+	        _promise2.default.all(json.map(function (street_name) {
+	          //eslint-disable-line
+	          var filters = { street_name: street_name, month: month };
+	          if (flat_type !== 'ALL') (0, _assign2.default)(filters, { flat_type: flat_type }); // eslint-disable-line
+	          var dataURL = 'https://data.gov.sg/api/action/datastore_search?resource_id=' + resource + '&filters=' + (0, _stringify2.default)(filters);
+	          return window.fetch(dataURL, { Accept: 'application/json' }).then(function (data) {
+	            return data.json();
+	          });
+	        })).then(function (results) {
+	          return results.reduce(function (records, res) {
+	            if (res.result && res.result.records) {
+	              return records.concat(res.result.records);
+	            } else {
+	              return records;
+	            }
+	          }, []);
+	        }).then(function (records) {
+	          if (!json.length) {
+	            _this3.setState({
+	              table: {
+	                title: '',
+	                colNames: [],
+	                rows: []
+	              }
+	            });
+	            console.log('No result around selected location');
+	            return;
+	          }
+
+	          var title = 'Transactions Records in ' + (0, _helpers.getMonthYear)(month) + ' around selected location';
+	          var colNames = ['#', 'Block', 'Street Name', 'Flat Type', 'Storey Range', 'Lease Commence', 'Floor Area (sqm)', 'Resale Price (SGD)'];
+
+	          var transactions = (0, _lodash2.default)(records, function (record) {
+	            return +record.resale_price;
+	          }, 'desc');
+	          var rows = transactions.map(function (transaction, index) {
+	            return [index + 1, transaction.block.trim(), (0, _helpers.capitalizeFirstLetters)(transaction.street_name.trim()), transaction.flat_type.trim(), transaction.storey_range.trim().toLowerCase(), transaction.lease_commence_date, transaction.floor_area_sqm, (+transaction.resale_price).toLocaleString()];
+	          });
+
+	          _this3.setState({
+	            table: { title: title, colNames: colNames, rows: rows }
+	          });
+	        });
+	      });
+	    }
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      var _this3 = this;
+	      var _this4 = this;
 
 	      var initMap = function initMap() {
-	        _this3.mapCenter = new google.maps.LatLng(1.352083, 103.819836);
-	        _this3.map = new google.maps.Map(_this3.refs.map, {
-	          center: _this3.mapCenter,
+	        _this4.mapCenter = new google.maps.LatLng(1.352083, 103.819836);
+	        _this4.map = new google.maps.Map(_this4.refs.map, {
+	          center: _this4.mapCenter,
 	          zoom: 11,
 	          draggableCursor: 'crosshair',
 	          scrollwheel: false
 	        });
 
-	        _this3.heatmap = new google.maps.visualization.HeatmapLayer({
+	        _this4.heatmap = new google.maps.visualization.HeatmapLayer({
 	          radius: 7
 	        });
-	        _this3.heatmap.setMap(_this3.map);
+	        _this4.map.addListener('click', function (e) {
+	          var target = e.latLng;
+	          _this4.listAllTransactions(target.lat(), target.lng(), _this4.props.selectedMonth, _this4.props.selectedFlatType);
+	        });
+	        _this4.heatmap.setMap(_this4.map);
 
-	        _this3.plotHeatmap(_this3.props.selectedMonth, _this3.props.selectedFlatType);
+	        _this4.plotHeatmap(_this4.props.selectedMonth, _this4.props.selectedFlatType);
 	      };
 	      if (window.googleMapsLoaded) initMap();else window.googleOnLoadCallback = initMap();
 	    }
@@ -33837,6 +33939,13 @@
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
 	      if (this.props.selectedMonth === nextProps.selectedMonth && this.props.selectedFlatType === nextProps.selectedFlatType) return;
+	      this.setState({
+	        table: {
+	          title: '',
+	          colNames: [],
+	          rows: []
+	        }
+	      });
 	      this.plotHeatmap(nextProps.selectedMonth, nextProps.selectedFlatType);
 	    }
 	  }, {
@@ -33868,7 +33977,7 @@
 	          _react2.default.createElement(_IconButton2.default, { id: 'next-month', icon: 'fa-angle-right',
 	            value: nextMonth, handleClick: this.props.updateMonth })
 	        ),
-	        _react2.default.createElement('div', { className: 'chart-detail' })
+	        _react2.default.createElement(_Table2.default, this.state.table)
 	      );
 	    }
 	  }]);
@@ -33889,21 +33998,21 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Maps.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 375 */
+/* 376 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(376), __esModule: true };
+	module.exports = { "default": __webpack_require__(377), __esModule: true };
 
 /***/ },
-/* 376 */
+/* 377 */
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(299);
 	__webpack_require__(286);
-	module.exports = __webpack_require__(377);
+	module.exports = __webpack_require__(378);
 
 /***/ },
-/* 377 */
+/* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var anObject = __webpack_require__(250)
@@ -33915,7 +34024,7 @@
 	};
 
 /***/ },
-/* 378 */
+/* 379 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -33987,7 +34096,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "IconButton.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 379 */
+/* 380 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -34274,7 +34383,7 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "About.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 380 */
+/* 381 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
@@ -34441,16 +34550,16 @@
 	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Selectors.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 381 */
+/* 382 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(382);
+	var content = __webpack_require__(383);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(384)(content, {});
+	var update = __webpack_require__(385)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -34467,10 +34576,10 @@
 	}
 
 /***/ },
-/* 382 */
+/* 383 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(383)();
+	exports = module.exports = __webpack_require__(384)();
 	// imports
 
 
@@ -34481,7 +34590,7 @@
 
 
 /***/ },
-/* 383 */
+/* 384 */
 /***/ function(module, exports) {
 
 	/*
@@ -34537,7 +34646,7 @@
 
 
 /***/ },
-/* 384 */
+/* 385 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -34789,25 +34898,25 @@
 
 
 /***/ },
-/* 385 */
+/* 386 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process, global) {'use strict';
 
 	function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-	var jsExtend = __webpack_require__(386);
-	var debug = _interopDefault(__webpack_require__(387));
-	var inherits = _interopDefault(__webpack_require__(390));
-	var lie = _interopDefault(__webpack_require__(391));
-	var pouchdbCollections = __webpack_require__(393);
-	var getArguments = _interopDefault(__webpack_require__(394));
-	var events = __webpack_require__(395);
-	var scopedEval = _interopDefault(__webpack_require__(396));
-	var Md5 = _interopDefault(__webpack_require__(397));
-	var vuvuzela = _interopDefault(__webpack_require__(398));
-	var PromisePool = _interopDefault(__webpack_require__(399));
-	var pouchdbCollate = __webpack_require__(400);
+	var jsExtend = __webpack_require__(387);
+	var debug = _interopDefault(__webpack_require__(388));
+	var inherits = _interopDefault(__webpack_require__(391));
+	var lie = _interopDefault(__webpack_require__(392));
+	var pouchdbCollections = __webpack_require__(394);
+	var getArguments = _interopDefault(__webpack_require__(395));
+	var events = __webpack_require__(396);
+	var scopedEval = _interopDefault(__webpack_require__(397));
+	var Md5 = _interopDefault(__webpack_require__(398));
+	var vuvuzela = _interopDefault(__webpack_require__(399));
+	var PromisePool = _interopDefault(__webpack_require__(400));
+	var pouchdbCollate = __webpack_require__(401);
 
 	/* istanbul ignore next */
 	var PouchPromise = typeof Promise === 'function' ? Promise : lie;
@@ -45483,7 +45592,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), (function() { return this; }())))
 
 /***/ },
-/* 386 */
+/* 387 */
 /***/ function(module, exports) {
 
 	(function() { 
@@ -45516,7 +45625,7 @@
 	}).call(this);
 
 /***/ },
-/* 387 */
+/* 388 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -45526,7 +45635,7 @@
 	 * Expose `debug()` as the module.
 	 */
 
-	exports = module.exports = __webpack_require__(388);
+	exports = module.exports = __webpack_require__(389);
 	exports.log = log;
 	exports.formatArgs = formatArgs;
 	exports.save = save;
@@ -45690,7 +45799,7 @@
 
 
 /***/ },
-/* 388 */
+/* 389 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -45706,7 +45815,7 @@
 	exports.disable = disable;
 	exports.enable = enable;
 	exports.enabled = enabled;
-	exports.humanize = __webpack_require__(389);
+	exports.humanize = __webpack_require__(390);
 
 	/**
 	 * The currently active debug mode names, and names to skip.
@@ -45893,7 +46002,7 @@
 
 
 /***/ },
-/* 389 */
+/* 390 */
 /***/ function(module, exports) {
 
 	/**
@@ -46024,7 +46133,7 @@
 
 
 /***/ },
-/* 390 */
+/* 391 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -46053,11 +46162,11 @@
 
 
 /***/ },
-/* 391 */
+/* 392 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
-	var immediate = __webpack_require__(392);
+	var immediate = __webpack_require__(393);
 
 	/* istanbul ignore next */
 	function INTERNAL() {}
@@ -46338,7 +46447,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 392 */
+/* 393 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -46414,7 +46523,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 393 */
+/* 394 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -46489,7 +46598,7 @@
 
 
 /***/ },
-/* 394 */
+/* 395 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -46513,7 +46622,7 @@
 	}
 
 /***/ },
-/* 395 */
+/* 396 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -46821,7 +46930,7 @@
 
 
 /***/ },
-/* 396 */
+/* 397 */
 /***/ function(module, exports) {
 
 	// Generated by CoffeeScript 1.9.2
@@ -46849,7 +46958,7 @@
 
 
 /***/ },
-/* 397 */
+/* 398 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function (factory) {
@@ -47558,7 +47667,7 @@
 
 
 /***/ },
-/* 398 */
+/* 399 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -47737,7 +47846,7 @@
 
 
 /***/ },
-/* 399 */
+/* 400 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
@@ -47959,7 +48068,7 @@
 
 
 /***/ },
-/* 400 */
+/* 401 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47968,7 +48077,7 @@
 	var MAGNITUDE_DIGITS = 3; // ditto
 	var SEP = ''; // set to '_' for easier debugging 
 
-	var utils = __webpack_require__(401);
+	var utils = __webpack_require__(402);
 
 	exports.collate = function (a, b) {
 
@@ -48318,7 +48427,7 @@
 
 
 /***/ },
-/* 401 */
+/* 402 */
 /***/ function(module, exports) {
 
 	'use strict';

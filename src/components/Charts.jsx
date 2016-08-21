@@ -1,15 +1,21 @@
 import React from 'react';
 import 'whatwg-fetch';
 import sortByOrder from 'lodash.sortbyorder';
+import Table from './Table';
 import Loader from './Loader';
-import { capitalizeFirstLetters } from './helpers.js';
+import { capitalizeFirstLetters, getMonthYear } from './helpers.js';
 
 export default class Charts extends React.Component {
   constructor (props) {
     super(props);
 
     this.state = {
-      isLoading: false
+      isLoading: false,
+      table: {
+        title: '',
+        colNames: [],
+        rows: []
+      }
     };
 
     this.layout = {
@@ -43,6 +49,7 @@ export default class Charts extends React.Component {
 
     this.plotChart = this.plotChart.bind(this);
     this.renderData = this.renderData.bind(this);
+    this.listAllTransactions = this.listAllTransactions.bind(this);
   }
 
   getTitle (town, chartType) {
@@ -58,7 +65,7 @@ export default class Charts extends React.Component {
   plotChart (town, chartType) {
     this.props.db.get(town)
     .then(doc => {
-      this.renderData(doc, chartType);
+      this.renderData(doc);
       if (doc.lastUpdate < this.props.lastUpdate) {
         this.getData(town).then(datasets => {
           doc['Average'] = datasets[0];
@@ -68,7 +75,7 @@ export default class Charts extends React.Component {
           this.props.db.put(doc)
             .then(console.log.bind(console))
             .catch(console.error.bind(console));
-          this.renderData(doc, chartType);
+          this.renderData(doc);
         });
       }
     })
@@ -87,7 +94,7 @@ export default class Charts extends React.Component {
         this.props.db.put(doc)
           .then(console.log.bind(console))
           .catch(console.error.bind(console));
-        this.renderData(doc, chartType);
+        this.renderData(doc);
       });
     });
   }
@@ -178,106 +185,81 @@ export default class Charts extends React.Component {
     });
   }
 
-  renderData (dataObj, chartType) {
+  renderData (dataObj) {
     if (dataObj._id !== this.props.selectedTown) console.warn('overlapping queries');
     else {
+      Plotly.newPlot(this.refs.plotContainer, dataObj[this.props.selectedChartType], this.layout);
+      this.refs.plotContainer.on('plotly_click', click => {
+        if (!click.points[0].data.name) return;
+        this.listAllTransactions(this.props.selectedTown, click.points[0].data.name, click.points[0].x);
+      });
       this.setState({
         isLoading: false
       });
-      Plotly.newPlot(this.refs.plotContainer, dataObj[chartType], this.layout);
-      // this.plotDiv.on('plotly_click', click => {
-      //   if (!click.points[0].data.name) return
-      //   this.listAllTransactions(this.town, click.points[0].data.name, click.points[0].x)
-      // })
     }
   }
 
-  // listAllTransactions (town, flat_type, date) {
-  //   this.chartDetail = document.getElementById('chart-detail')
-  //   const table = document.createElement('table')
-  //
-  //   const tableTitle = document.createElement('h2')
-  //   tableTitle.id = 'chart-detail-title'
-  //   tableTitle.innerHTML =
-  //     'Transactions Records for ' + capitalizeFirstLetters(flat_type) +
-  //     ' Flats <span>in ' + capitalizeFirstLetters(this.town) +
-  //     ' in ' + getMonthYear(date) + '</span>'
-  //   const thead = document.createElement('thead')
-  //   const tr = document.createElement('tr')
-  //   const headers = [
-  //     '#',
-  //     'Block',
-  //     'Street Name',
-  //     'Flat Type',
-  //     'Storey Range',
-  //     'Lease Commence',
-  //     'Floor Area (sqm)',
-  //     'Resale Price (SGD)'
-  //   ]
-  //
-  //   headers.forEach(header => {
-  //     const th = document.createElement('th')
-  //     th.textContent = header
-  //     tr.appendChild(th)
-  //   })
-  //   thead.appendChild(tr)
-  //   table.appendChild(thead)
-  //
-  //   const resID = [
-  //     '8c00bf08-9124-479e-aeca-7cc411d884c4',
-  //     '83b2fc37-ce8c-4df4-968b-370fd818138b'
-  //   ]
-  //   const month = date.slice(0, 7)
-  //   const resource =
-  //     month < '2012-03' ? resID[0] : resID[1]
-  //   const filters = {town, flat_type, month}
-  //   const dataURL = 'https://data.gov.sg/api/action/datastore_search?resource_id=' +
-  //     resource + '&filters=' + JSON.stringify(filters)
-  //
-  //   window.fetch(dataURL, { Accept: 'application/json' }).then(data => data.json())
-  //     .then(json => {
-  //       const tbody = document.createElement('tbody')
-  //       tbody.setAttribute('id', 'table-body')
-  //       sortByOrder(json.result.records, record => +record.resale_price, 'desc')
-  //         .forEach((transaction, index) => {
-  //           const row = document.createElement('tr')
-  //           row.classList.add('table-striped')
-  //           let rowData = [
-  //             index + 1,
-  //             transaction.block.trim(),
-  //             capitalizeFirstLetters(transaction.street_name.trim()),
-  //             transaction.flat_type.trim(),
-  //             transaction.storey_range.trim().toLowerCase(),
-  //             transaction.lease_commence_date,
-  //             transaction.floor_area_sqm,
-  //             (+transaction.resale_price).toLocaleString()
-  //           ]
-  //           rowData.map(data => {
-  //             const td = document.createElement('td')
-  //             td.textContent = data
-  //             return td
-  //           }).forEach(td => row.appendChild(td))
-  //           tbody.appendChild(row)
-  //         })
-  //       table.appendChild(tbody)
-  //
-  //       removeChildren(this.chartDetail)
-  //
-  //       this.chartDetail.appendChild(tableTitle)
-  //       this.chartDetail.appendChild(table)
-  //
-  //       document.getElementById('chart-detail-title').scrollIntoView()
-  //     })
-  // }
+  listAllTransactions (town, flat_type, date) { // eslint-disable-line
+    const resID = [
+      '8c00bf08-9124-479e-aeca-7cc411d884c4',
+      '83b2fc37-ce8c-4df4-968b-370fd818138b'
+    ];
+    const month = date.slice(0, 7);
+    const resource = month < '2012-03' ? resID[0] : resID[1];
+    const filters = {town, flat_type, month};
+    const dataURL = 'https://data.gov.sg/api/action/datastore_search?resource_id=' +
+      resource + '&filters=' + JSON.stringify(filters);
+
+    window.fetch(dataURL, { Accept: 'application/json' })
+      .then(data => data.json())
+      .then(json => {
+        console.log(json);
+        const title =
+          'Transactions Records for ' + capitalizeFirstLetters(flat_type) +
+          ' Flats <span>in ' + capitalizeFirstLetters(town) +
+          ' in ' + getMonthYear(date) + '</span>';
+        const colNames = [
+          '#',
+          'Block',
+          'Street Name',
+          'Storey Range',
+          'Lease Commence',
+          'Floor Area (sqm)',
+          'Resale Price (SGD)'
+        ];
+
+        const transactions = sortByOrder(json.result.records,
+          record => +record.resale_price, 'desc');
+        const rows = transactions.map((transaction, index) => ([
+          index + 1,
+          transaction.block.trim(),
+          capitalizeFirstLetters(transaction.street_name.trim()),
+          transaction.storey_range.trim().toLowerCase(),
+          transaction.lease_commence_date,
+          transaction.floor_area_sqm,
+          (+transaction.resale_price).toLocaleString()
+        ]));
+
+        this.setState({
+          table: {title, colNames, rows}
+        });
+      });
+  }
 
   componentDidMount () {
-    // make a plotly container
     this.plotChart(this.props.selectedTown, this.props.selectedChartType);
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.selectedTown === nextProps.selectedTown &&
       this.props.selectedChartType === nextProps.selectedChartType) return;
+    this.setState({
+      table: {
+        title: '',
+        colNames: [],
+        rows: []
+      }
+    });
     this.plotChart(nextProps.selectedTown, nextProps.selectedChartType);
   }
 
@@ -291,7 +273,7 @@ export default class Charts extends React.Component {
           <div ref='plotContainer' className='js-plotly-plot' />
           <Loader hidden={!this.state.isLoading} />
         </div>
-        <div className='chart-detail'></div>
+        <Table {...this.state.table} />
       </main>
       );
   }
