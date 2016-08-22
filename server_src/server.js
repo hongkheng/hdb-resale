@@ -1,16 +1,13 @@
 import app from './app.js';
+import devServer from './server.dev';
 
 const port = process.env.PORT || 8080;
 
-const node_env = process.env.NODE_ENV|| 'development';
+const nodeEnv = process.env.NODE_ENV || 'development';
+console.log('node env', nodeEnv);
 
-console.log('node env', node_env);
-
-if (node_env === 'development') {
-
-  const wpBundle = require('./server.dev');
-  wpBundle();
-
+if (nodeEnv === 'development') {
+  devServer();
 }
 
 app.listen(port);
