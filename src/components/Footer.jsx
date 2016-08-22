@@ -25,5 +25,5 @@ export default class Footer extends React.Component {
 
 Footer.propType = {
   retrieveDate: React.PropTypes.object,
-  handleAccept: React.PropTypes.function
+  handleAccept: React.PropTypes.func
 };

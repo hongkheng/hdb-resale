@@ -100,7 +100,7 @@ export default class Charts extends React.Component {
   }
 
   getData (town) {
-    console.log('retrieving data from MongoDB', town);
+    console.log('retrieving data from MongoDB');
     const url = window.location.protocol + '//' + window.location.host + '/time_series?town=' + town;
     const headers = {Accept: 'application/json'};
     return window.fetch(url, headers).then(res => res.json()).then(results => {

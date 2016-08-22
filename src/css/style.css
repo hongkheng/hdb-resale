@@ -504,6 +504,40 @@ main {
   width: 96vw;
   margin: 0 auto;
 }
+.chart-detail {
+  margin: 0 auto;
+  width: 96vw;
+}
+
+
+.chart-detail-title {
+  text-align: center;
+  margin-top: 1em;
+  margin-bottom: 0.8em;
+}
+
+.chart-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.chart-table-head {
+  background: #2f4f4f;
+  color: #fff;
+  border-color: inherit;
+  display: table-header-group;
+  vertical-align: middle;
+}
+
+.chart-table th, .chart-table td {
+  text-align: center;
+  padding: 0.5em;
+}
+
+.chart-detail tr:nth-child(even) {
+  background: #d3d3d3;
+}
 
 #map {
   width: 100%;
@@ -668,5 +702,38 @@ main {
   .chart-title {
     margin-top: 4.33em;
     font-size: 1.33em;
+  }
+
+  .chart-detail-title {
+    font-size: 1.33em;
+  }
+}
+
+
+@media (max-width: 750px) {
+
+  .chart-table-head tr {
+    display: none;
+  }
+  .chart-detail tr:nth-child(odd) {
+    background: #d3d3d3;
+  }
+
+  .chart-detail tr:nth-child(even) {
+    background: #fff;
+  }
+
+  .chart-detail tbody tr {
+    display: flex;
+    flex-direction: column;
+  }
+  .chart-detail td {
+    display: flex;
+    justify-content: flex-start;
+  }
+  .chart-detail td:before {
+    font-weight: bold;
+    width: 50%;
+    text-align: start;
   }
 }

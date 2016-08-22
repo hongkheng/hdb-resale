@@ -1,6 +1,7 @@
 import express from 'express'
 import fallback from 'express-history-api-fallback'
 import bodyParser from 'body-parser'
+import compression from 'compression'
 import path from 'path'
 import InitDB from './util/InitDB.js'
 import {toSVY, eucliDist2} from './util/geometry'
@@ -13,6 +14,8 @@ const addressCache = {lastUpdate: Date.now()}
 db.getAddressBook().then(docs => {
   addressCache.data = docs
 })
+
+app.use(compression());
 
 app.use(express.static(root))
 app.use(bodyParser.json())
