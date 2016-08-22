@@ -547,6 +547,7 @@ main {
   background-color: #789;
   opacity: 0.5;
   color: #fff;
+  cursor: pointer;
 }
 .loader-overlay {
   position: absolute;

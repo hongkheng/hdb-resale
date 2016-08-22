@@ -44,7 +44,7 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -66,21 +66,21 @@
 
 	var _Charts2 = _interopRequireDefault(_Charts);
 
-	var _Maps = __webpack_require__(373);
+	var _Maps = __webpack_require__(375);
 
 	var _Maps2 = _interopRequireDefault(_Maps);
 
-	var _About = __webpack_require__(377);
+	var _About = __webpack_require__(380);
 
 	var _About2 = _interopRequireDefault(_About);
 
-	var _Selectors = __webpack_require__(378);
+	var _Selectors = __webpack_require__(381);
 
-	__webpack_require__(379);
+	__webpack_require__(382);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	window.PouchDB = __webpack_require__(383);
+	window.PouchDB = __webpack_require__(386);
 
 	_reactDom2.default.render(_react2.default.createElement(
 	  _reactRouter.Router,
@@ -96,7 +96,7 @@
 	  )
 	), document.getElementById('root'));
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "index.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "index.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 1 */
@@ -207,7 +207,6 @@
 /***/ function(module, exports) {
 
 	// shim for using process in browser
-
 	var process = module.exports = {};
 
 	// cached from whatever global is present so that test runners that stub it
@@ -219,21 +218,63 @@
 	var cachedClearTimeout;
 
 	(function () {
-	  try {
-	    cachedSetTimeout = setTimeout;
-	  } catch (e) {
-	    cachedSetTimeout = function () {
-	      throw new Error('setTimeout is not defined');
+	    try {
+	        cachedSetTimeout = setTimeout;
+	    } catch (e) {
+	        cachedSetTimeout = function () {
+	            throw new Error('setTimeout is not defined');
+	        }
 	    }
-	  }
-	  try {
-	    cachedClearTimeout = clearTimeout;
-	  } catch (e) {
-	    cachedClearTimeout = function () {
-	      throw new Error('clearTimeout is not defined');
+	    try {
+	        cachedClearTimeout = clearTimeout;
+	    } catch (e) {
+	        cachedClearTimeout = function () {
+	            throw new Error('clearTimeout is not defined');
+	        }
 	    }
-	  }
 	} ())
+	function runTimeout(fun) {
+	    if (cachedSetTimeout === setTimeout) {
+	        //normal enviroments in sane situations
+	        return setTimeout(fun, 0);
+	    }
+	    try {
+	        // when when somebody has screwed with setTimeout but no I.E. maddness
+	        return cachedSetTimeout(fun, 0);
+	    } catch(e){
+	        try {
+	            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+	            return cachedSetTimeout.call(null, fun, 0);
+	        } catch(e){
+	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+	            return cachedSetTimeout.call(this, fun, 0);
+	        }
+	    }
+
+
+	}
+	function runClearTimeout(marker) {
+	    if (cachedClearTimeout === clearTimeout) {
+	        //normal enviroments in sane situations
+	        return clearTimeout(marker);
+	    }
+	    try {
+	        // when when somebody has screwed with setTimeout but no I.E. maddness
+	        return cachedClearTimeout(marker);
+	    } catch (e){
+	        try {
+	            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+	            return cachedClearTimeout.call(null, marker);
+	        } catch (e){
+	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+	            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+	            return cachedClearTimeout.call(this, marker);
+	        }
+	    }
+
+
+
+	}
 	var queue = [];
 	var draining = false;
 	var currentQueue;
@@ -258,7 +299,7 @@
 	    if (draining) {
 	        return;
 	    }
-	    var timeout = cachedSetTimeout.call(null, cleanUpNextTick);
+	    var timeout = runTimeout(cleanUpNextTick);
 	    draining = true;
 
 	    var len = queue.length;
@@ -275,7 +316,7 @@
 	    }
 	    currentQueue = null;
 	    draining = false;
-	    cachedClearTimeout.call(null, timeout);
+	    runClearTimeout(timeout);
 	}
 
 	process.nextTick = function (fun) {
@@ -287,7 +328,7 @@
 	    }
 	    queue.push(new Item(fun, args));
 	    if (queue.length === 1 && !draining) {
-	        cachedSetTimeout.call(null, drainQueue, 0);
+	        runTimeout(drainQueue);
 	    }
 	};
 
@@ -27085,7 +27126,7 @@
 /* 238 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -27266,6 +27307,7 @@
 	    key: 'updateTown',
 	    value: function updateTown(evt) {
 	      var selectedTown = evt.target.value;
+	      if (!selectedTown) return;
 	      this.props.router.push({
 	        pathname: '/charts/' + (0, _helpers.serialize)(selectedTown),
 	        query: { type: (0, _helpers.serialize)(this.state.selectedChartType) }
@@ -27275,6 +27317,7 @@
 	    key: 'updateMonth',
 	    value: function updateMonth(evt) {
 	      var selectedMonth = evt.target.value;
+	      if (!selectedMonth) return;
 	      this.props.router.push({
 	        pathname: '/maps/' + (0, _helpers.serialize)(selectedMonth),
 	        query: { flat: (0, _helpers.serialize)(this.state.selectedFlatType) }
@@ -27284,6 +27327,7 @@
 	    key: 'updateChartType',
 	    value: function updateChartType(evt) {
 	      var selectedChartType = evt.target.value;
+	      if (!selectedChartType) return;
 	      this.props.router.push({
 	        pathname: '/charts/' + (0, _helpers.serialize)(this.state.selectedTown),
 	        query: { type: (0, _helpers.serialize)(selectedChartType) }
@@ -27293,6 +27337,7 @@
 	    key: 'updateFlatType',
 	    value: function updateFlatType(evt) {
 	      var selectedFlatType = evt.target.value;
+	      if (!selectedFlatType) return;
 	      this.props.router.push({
 	        pathname: '/maps/' + (0, _helpers.serialize)(this.state.selectedMonth),
 	        query: { flat: (0, _helpers.serialize)(selectedFlatType) }
@@ -27307,11 +27352,17 @@
 	        updateChartType: this.updateChartType,
 	        updateFlatType: this.updateFlatType
 	      }, this.state));
+
+	      var main = this.state.lastUpdate && this.props.main && _react2.default.cloneElement(this.props.main, (0, _assign2.default)({
+	        updateTown: this.updateTown,
+	        updateMonth: this.updateMonth
+	      }, this.state));
+
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'container' },
 	        _react2.default.createElement(_Navigation2.default, (0, _extends3.default)({}, this.state, { selector: selector })),
-	        this.state.lastUpdate && this.props.main && _react2.default.cloneElement(this.props.main, this.state),
+	        main,
 	        _react2.default.createElement(_Footer2.default, { retrieveDate: this.state.lastUpdate, handleAccept: this.toggleTerms }),
 	        !this.state.hideTerms && _react2.default.createElement(_Terms2.default, { handleAccept: this.acceptTerms })
 	      );
@@ -27322,7 +27373,7 @@
 
 	exports.default = (0, _reactRouter.withRouter)(App);
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "App.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "App.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 239 */
@@ -29664,7 +29715,7 @@
 /* 351 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -29775,13 +29826,13 @@
 	  selector: _react2.default.PropTypes.element
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Navigation.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Navigation.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 352 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -29807,13 +29858,13 @@
 	  return monthNames[+dateStr.slice(5, 7) - 1] + ' ' + dateStr.slice(0, 4);
 	}
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "helpers.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "helpers.js" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 353 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -29866,7 +29917,7 @@
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'footer',
-	        null,
+	        { className: 'footer' },
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'footer-text' },
@@ -29874,7 +29925,7 @@
 	          _react2.default.createElement(
 	            'span',
 	            { className: 'retrieve-date' },
-	            parseDate(this.props.retrievedDate)
+	            parseDate(this.props.retrieveDate)
 	          ),
 	          ' from ',
 	          _react2.default.createElement(
@@ -29918,13 +29969,19 @@
 
 	exports.default = Footer;
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Footer.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+	Footer.propType = {
+	  retrieveDate: _react2.default.PropTypes.object,
+	  handleAccept: _react2.default.PropTypes.function
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Footer.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 354 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -30015,7 +30072,12 @@
 
 	exports.default = Terms;
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Terms.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+	Terms.propType = {
+	  handleAccept: _react2.default.PropTypes.func
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Terms.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 355 */
@@ -30460,13 +30522,17 @@
 /* 356 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _stringify = __webpack_require__(281);
+
+	var _stringify2 = _interopRequireDefault(_stringify);
 
 	var _getPrototypeOf = __webpack_require__(317);
 
@@ -30498,6 +30564,14 @@
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
+	var _Table = __webpack_require__(373);
+
+	var _Table2 = _interopRequireDefault(_Table);
+
+	var _Loader = __webpack_require__(374);
+
+	var _Loader2 = _interopRequireDefault(_Loader);
+
 	var _helpers = __webpack_require__(352);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -30509,6 +30583,15 @@
 	    (0, _classCallCheck3.default)(this, Charts);
 
 	    var _this = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(Charts).call(this, props));
+
+	    _this.state = {
+	      isLoading: false,
+	      table: {
+	        title: '',
+	        colNames: [],
+	        rows: []
+	      }
+	    };
 
 	    _this.layout = {
 	      hovermode: 'closest',
@@ -30523,8 +30606,25 @@
 	      }
 	    };
 
+	    if (window.matchMedia('(max-width: 900px)').matches) {
+	      _this.layout.width = 500;
+	      _this.layout.legend = {
+	        x: 0.08,
+	        y: 0.92,
+	        xanchor: 'left',
+	        yanchor: 'top'
+	      };
+	    } else {
+	      _this.layout.width = 700;
+	      _this.layout.legend = {
+	        y: 0.5,
+	        yanchor: 'middle'
+	      };
+	    }
+
 	    _this.plotChart = _this.plotChart.bind(_this);
 	    _this.renderData = _this.renderData.bind(_this);
+	    _this.listAllTransactions = _this.listAllTransactions.bind(_this);
 	    return _this;
 	  }
 
@@ -30545,7 +30645,7 @@
 	      var _this2 = this;
 
 	      this.props.db.get(town).then(function (doc) {
-	        _this2.renderData(doc, chartType);
+	        _this2.renderData(doc);
 	        if (doc.lastUpdate < _this2.props.lastUpdate) {
 	          _this2.getData(town).then(function (datasets) {
 	            doc['Average'] = datasets[0];
@@ -30553,12 +30653,13 @@
 	            doc['Smoothed'] = datasets[2];
 	            doc.lastUpdate = _this2.props.lastUpdate;
 	            _this2.props.db.put(doc).then(console.log.bind(console)).catch(console.error.bind(console));
-	            _this2.renderData(doc, chartType);
+	            _this2.renderData(doc);
 	          });
 	        }
 	      }).catch(function () {
-	        // this.loadingScreen.className = 'fa fa-spinner fa-pulse'
-	        // this.plotDiv.classList.add('chart-loading')
+	        _this2.setState({
+	          isLoading: true
+	        });
 	        _this2.getData(town).then(function (datasets) {
 	          var doc = {
 	            '_id': town,
@@ -30568,7 +30669,7 @@
 	            'Smoothed': datasets[2]
 	          };
 	          _this2.props.db.put(doc).then(console.log.bind(console)).catch(console.error.bind(console));
-	          _this2.renderData(doc, chartType);
+	          _this2.renderData(doc);
 	        });
 	      });
 	    }
@@ -30665,106 +30766,67 @@
 	    }
 	  }, {
 	    key: 'renderData',
-	    value: function renderData(dataObj, chartType) {
+	    value: function renderData(dataObj) {
+	      var _this3 = this;
+
 	      if (dataObj._id !== this.props.selectedTown) console.warn('overlapping queries');else {
-	        // this.loadingScreen.className = 'fa'
-	        // this.plotDiv.classList.remove('chart-loading')
-	        Plotly.newPlot(this.refs.plotContainer, dataObj[chartType], this.layout);
-	        // this.plotDiv.on('plotly_click', click => {
-	        //   if (!click.points[0].data.name) return
-	        //   this.listAllTransactions(this.town, click.points[0].data.name, click.points[0].x)
-	        // })
+	        Plotly.newPlot(this.refs.plotContainer, dataObj[this.props.selectedChartType], this.layout);
+	        this.refs.plotContainer.on('plotly_click', function (click) {
+	          if (!click.points[0].data.name) return;
+	          _this3.listAllTransactions(_this3.props.selectedTown, click.points[0].data.name, click.points[0].x);
+	        });
+	        this.setState({
+	          isLoading: false
+	        });
 	      }
 	    }
+	  }, {
+	    key: 'listAllTransactions',
+	    value: function listAllTransactions(town, flat_type, date) {
+	      var _this4 = this;
 
-	    // listAllTransactions (town, flat_type, date) {
-	    //   this.chartDetail = document.getElementById('chart-detail')
-	    //   const table = document.createElement('table')
-	    //
-	    //   const tableTitle = document.createElement('h2')
-	    //   tableTitle.id = 'chart-detail-title'
-	    //   tableTitle.innerHTML =
-	    //     'Transactions Records for ' + capitalizeFirstLetters(flat_type) +
-	    //     ' Flats <span>in ' + capitalizeFirstLetters(this.town) +
-	    //     ' in ' + getMonthYear(date) + '</span>'
-	    //   const thead = document.createElement('thead')
-	    //   const tr = document.createElement('tr')
-	    //   const headers = [
-	    //     '#',
-	    //     'Block',
-	    //     'Street Name',
-	    //     'Flat Type',
-	    //     'Storey Range',
-	    //     'Lease Commence',
-	    //     'Floor Area (sqm)',
-	    //     'Resale Price (SGD)'
-	    //   ]
-	    //
-	    //   headers.forEach(header => {
-	    //     const th = document.createElement('th')
-	    //     th.textContent = header
-	    //     tr.appendChild(th)
-	    //   })
-	    //   thead.appendChild(tr)
-	    //   table.appendChild(thead)
-	    //
-	    //   const resID = [
-	    //     '8c00bf08-9124-479e-aeca-7cc411d884c4',
-	    //     '83b2fc37-ce8c-4df4-968b-370fd818138b'
-	    //   ]
-	    //   const month = date.slice(0, 7)
-	    //   const resource =
-	    //     month < '2012-03' ? resID[0] : resID[1]
-	    //   const filters = {town, flat_type, month}
-	    //   const dataURL = 'https://data.gov.sg/api/action/datastore_search?resource_id=' +
-	    //     resource + '&filters=' + JSON.stringify(filters)
-	    //
-	    //   window.fetch(dataURL, { Accept: 'application/json' }).then(data => data.json())
-	    //     .then(json => {
-	    //       const tbody = document.createElement('tbody')
-	    //       tbody.setAttribute('id', 'table-body')
-	    //       sortByOrder(json.result.records, record => +record.resale_price, 'desc')
-	    //         .forEach((transaction, index) => {
-	    //           const row = document.createElement('tr')
-	    //           row.classList.add('table-striped')
-	    //           let rowData = [
-	    //             index + 1,
-	    //             transaction.block.trim(),
-	    //             capitalizeFirstLetters(transaction.street_name.trim()),
-	    //             transaction.flat_type.trim(),
-	    //             transaction.storey_range.trim().toLowerCase(),
-	    //             transaction.lease_commence_date,
-	    //             transaction.floor_area_sqm,
-	    //             (+transaction.resale_price).toLocaleString()
-	    //           ]
-	    //           rowData.map(data => {
-	    //             const td = document.createElement('td')
-	    //             td.textContent = data
-	    //             return td
-	    //           }).forEach(td => row.appendChild(td))
-	    //           tbody.appendChild(row)
-	    //         })
-	    //       table.appendChild(tbody)
-	    //
-	    //       removeChildren(this.chartDetail)
-	    //
-	    //       this.chartDetail.appendChild(tableTitle)
-	    //       this.chartDetail.appendChild(table)
-	    //
-	    //       document.getElementById('chart-detail-title').scrollIntoView()
-	    //     })
-	    // }
+	      // eslint-disable-line
+	      var resID = ['8c00bf08-9124-479e-aeca-7cc411d884c4', '83b2fc37-ce8c-4df4-968b-370fd818138b'];
+	      var month = date.slice(0, 7);
+	      var resource = month < '2012-03' ? resID[0] : resID[1];
+	      var filters = { town: town, flat_type: flat_type, month: month };
+	      var dataURL = 'https://data.gov.sg/api/action/datastore_search?resource_id=' + resource + '&filters=' + (0, _stringify2.default)(filters);
 
+	      window.fetch(dataURL, { Accept: 'application/json' }).then(function (data) {
+	        return data.json();
+	      }).then(function (json) {
+	        console.log(json);
+	        var title = 'Transactions Records for ' + (0, _helpers.capitalizeFirstLetters)(flat_type) + ' Flats <span>in ' + (0, _helpers.capitalizeFirstLetters)(town) + ' in ' + (0, _helpers.getMonthYear)(date) + '</span>';
+	        var colNames = ['#', 'Block', 'Street Name', 'Storey Range', 'Lease Commence', 'Floor Area (sqm)', 'Resale Price (SGD)'];
+
+	        var transactions = (0, _lodash2.default)(json.result.records, function (record) {
+	          return +record.resale_price;
+	        }, 'desc');
+	        var rows = transactions.map(function (transaction, index) {
+	          return [index + 1, transaction.block.trim(), (0, _helpers.capitalizeFirstLetters)(transaction.street_name.trim()), transaction.storey_range.trim().toLowerCase(), transaction.lease_commence_date, transaction.floor_area_sqm, (+transaction.resale_price).toLocaleString()];
+	        });
+
+	        _this4.setState({
+	          table: { title: title, colNames: colNames, rows: rows }
+	        });
+	      });
+	    }
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      // make a plotly container
 	      this.plotChart(this.props.selectedTown, this.props.selectedChartType);
 	    }
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
 	      if (this.props.selectedTown === nextProps.selectedTown && this.props.selectedChartType === nextProps.selectedChartType) return;
+	      this.setState({
+	        table: {
+	          title: '',
+	          colNames: [],
+	          rows: []
+	        }
+	      });
 	      this.plotChart(nextProps.selectedTown, nextProps.selectedChartType);
 	    }
 	  }, {
@@ -30781,9 +30843,10 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'chart-container' },
-	          _react2.default.createElement('div', { ref: 'plotContainer', className: 'js-plotly-plot' })
+	          _react2.default.createElement('div', { ref: 'plotContainer', className: 'js-plotly-plot' }),
+	          _react2.default.createElement(_Loader2.default, { hidden: !this.state.isLoading })
 	        ),
-	        _react2.default.createElement('div', { className: 'chart-detail' })
+	        _react2.default.createElement(_Table2.default, this.state.table)
 	      );
 	    }
 	  }]);
@@ -30799,7 +30862,7 @@
 	  lastUpdate: _react2.default.PropTypes.lastUpdate
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Charts.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Charts.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
 /* 357 */
@@ -32588,19 +32651,6 @@
 	    funcTag = '[object Function]',
 	    genTag = '[object GeneratorFunction]';
 
-	/**
-	 * The base implementation of `_.property` without support for deep paths.
-	 *
-	 * @private
-	 * @param {string} key The key of the property to get.
-	 * @returns {Function} Returns the new accessor function.
-	 */
-	function baseProperty(key) {
-	  return function(object) {
-	    return object == null ? undefined : object[key];
-	  };
-	}
-
 	/** Used for built-in method references. */
 	var objectProto = Object.prototype;
 
@@ -32609,26 +32659,13 @@
 
 	/**
 	 * Used to resolve the
-	 * [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
 	 * of values.
 	 */
 	var objectToString = objectProto.toString;
 
 	/** Built-in value references. */
 	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
-
-	/**
-	 * Gets the "length" property value of `object`.
-	 *
-	 * **Note:** This function is used to avoid a
-	 * [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792) that affects
-	 * Safari on at least iOS 8.1-8.3 ARM64.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @returns {*} Returns the "length" value.
-	 */
-	var getLength = baseProperty('length');
 
 	/**
 	 * Checks if `value` is likely an `arguments` object.
@@ -32649,7 +32686,7 @@
 	 * // => false
 	 */
 	function isArguments(value) {
-	  // Safari 8.1 incorrectly makes `arguments.callee` enumerable in strict mode.
+	  // Safari 8.1 makes `arguments.callee` enumerable in strict mode.
 	  return isArrayLikeObject(value) && hasOwnProperty.call(value, 'callee') &&
 	    (!propertyIsEnumerable.call(value, 'callee') || objectToString.call(value) == argsTag);
 	}
@@ -32680,7 +32717,7 @@
 	 * // => false
 	 */
 	function isArrayLike(value) {
-	  return value != null && isLength(getLength(value)) && !isFunction(value);
+	  return value != null && isLength(value.length) && !isFunction(value);
 	}
 
 	/**
@@ -32731,8 +32768,7 @@
 	 */
 	function isFunction(value) {
 	  // The use of `Object#toString` avoids issues with the `typeof` operator
-	  // in Safari 8 which returns 'object' for typed array and weak map constructors,
-	  // and PhantomJS 1.9 which returns 'function' for `NodeList` instances.
+	  // in Safari 8-9 which returns 'object' for typed array and other constructors.
 	  var tag = isObject(value) ? objectToString.call(value) : '';
 	  return tag == funcTag || tag == genTag;
 	}
@@ -32740,16 +32776,15 @@
 	/**
 	 * Checks if `value` is a valid array-like length.
 	 *
-	 * **Note:** This function is loosely based on
-	 * [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+	 * **Note:** This method is loosely based on
+	 * [`ToLength`](http://ecma-international.org/ecma-262/7.0/#sec-tolength).
 	 *
 	 * @static
 	 * @memberOf _
 	 * @since 4.0.0
 	 * @category Lang
 	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a valid length,
-	 *  else `false`.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
 	 * @example
 	 *
 	 * _.isLength(3);
@@ -32771,7 +32806,7 @@
 
 	/**
 	 * Checks if `value` is the
-	 * [language type](http://www.ecma-international.org/ecma-262/6.0/#sec-ecmascript-language-types)
+	 * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
 	 * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
 	 *
 	 * @static
@@ -33399,7 +33434,7 @@
 /* 373 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -33407,7 +33442,211 @@
 	  value: true
 	});
 
-	var _getIterator2 = __webpack_require__(374);
+	var _getPrototypeOf = __webpack_require__(317);
+
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+	var _classCallCheck2 = __webpack_require__(320);
+
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+	var _createClass2 = __webpack_require__(321);
+
+	var _createClass3 = _interopRequireDefault(_createClass2);
+
+	var _possibleConstructorReturn2 = __webpack_require__(325);
+
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+	var _inherits2 = __webpack_require__(343);
+
+	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Table = function (_React$Component) {
+	  (0, _inherits3.default)(Table, _React$Component);
+
+	  function Table() {
+	    (0, _classCallCheck3.default)(this, Table);
+	    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(Table).apply(this, arguments));
+	  }
+
+	  (0, _createClass3.default)(Table, [{
+	    key: 'render',
+	    value: function render() {
+	      var colNames = this.props.colNames.map(function (colName, i) {
+	        return _react2.default.createElement(
+	          'th',
+	          { key: i },
+	          colName
+	        );
+	      });
+	      var rows = this.props.rows.map(function (r, i) {
+	        return _react2.default.createElement(
+	          'tr',
+	          { key: i },
+	          r.map(function (d, ii) {
+	            return _react2.default.createElement(
+	              'td',
+	              { key: ii },
+	              d
+	            );
+	          })
+	        );
+	      });
+
+	      var beforeContents = this.props.colNames.map(function (cn, i) {
+	        return '.chart-detail td:nth-of-type(' + (i + 1) + '):before { content: "' + cn + '"}';
+	      }).join('\n');
+
+	      var noBeforeContents = this.props.colNames.map(function (cn, i) {
+	        return '.chart-detail td:nth-of-type(' + (i + 1) + '):before { content: ""}';
+	      }).join('\n');
+
+	      var styleBlock = ['@media (max-width: 750px) {', beforeContents, '}', '@media (min-width: 751px) {', noBeforeContents, '}'];
+
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'chart-detail' },
+	        _react2.default.createElement(
+	          'style',
+	          null,
+	          styleBlock.join('\n')
+	        ),
+	        _react2.default.createElement('h2', { ref: 'title', dangerouslySetInnerHTML: { __html: this.props.title } }),
+	        _react2.default.createElement(
+	          'table',
+	          null,
+	          _react2.default.createElement(
+	            'thead',
+	            null,
+	            _react2.default.createElement(
+	              'tr',
+	              null,
+	              colNames
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'tbody',
+	            null,
+	            rows
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	  return Table;
+	}(_react2.default.Component);
+
+	exports.default = Table;
+
+
+	Table.propType = {
+	  title: _react2.default.PropTypes.string,
+	  colNames: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.string),
+	  rows: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.arrayOf(_react2.default.PropTypes.string))
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Table.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 374 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _getPrototypeOf = __webpack_require__(317);
+
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+	var _classCallCheck2 = __webpack_require__(320);
+
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+	var _createClass2 = __webpack_require__(321);
+
+	var _createClass3 = _interopRequireDefault(_createClass2);
+
+	var _possibleConstructorReturn2 = __webpack_require__(325);
+
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+	var _inherits2 = __webpack_require__(343);
+
+	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Loader = function (_React$Component) {
+	  (0, _inherits3.default)(Loader, _React$Component);
+
+	  function Loader() {
+	    (0, _classCallCheck3.default)(this, Loader);
+	    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(Loader).apply(this, arguments));
+	  }
+
+	  (0, _createClass3.default)(Loader, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'loader-overlay', hidden: this.props.hidden },
+	        _react2.default.createElement('i', { className: 'loading fa fa-spinner fa-pulse' })
+	      );
+	    }
+	  }]);
+	  return Loader;
+	}(_react2.default.Component);
+
+	exports.default = Loader;
+
+
+	Loader.propType = {
+	  hidden: _react2.default.PropTypes.bool
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Loader.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 375 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _assign = __webpack_require__(240);
+
+	var _assign2 = _interopRequireDefault(_assign);
+
+	var _promise = __webpack_require__(283);
+
+	var _promise2 = _interopRequireDefault(_promise);
+
+	var _stringify = __webpack_require__(281);
+
+	var _stringify2 = _interopRequireDefault(_stringify);
+
+	var _getIterator2 = __webpack_require__(376);
 
 	var _getIterator3 = _interopRequireDefault(_getIterator2);
 
@@ -33437,6 +33676,22 @@
 
 	__webpack_require__(355);
 
+	var _lodash = __webpack_require__(357);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var _Table = __webpack_require__(373);
+
+	var _Table2 = _interopRequireDefault(_Table);
+
+	var _IconButton = __webpack_require__(379);
+
+	var _IconButton2 = _interopRequireDefault(_IconButton);
+
+	var _Loader = __webpack_require__(374);
+
+	var _Loader2 = _interopRequireDefault(_Loader);
+
 	var _helpers = __webpack_require__(352);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -33449,8 +33704,19 @@
 
 	    var _this = (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(Maps).call(this, props));
 
+	    _this.state = {
+	      isLoading: false,
+	      table: {
+	        title: '',
+	        colNames: [],
+	        rows: []
+	      }
+	    };
+
 	    _this.plotHeatmap = _this.plotHeatmap.bind(_this);
 	    _this.renderData = _this.renderData.bind(_this);
+	    _this.listAllTransactions = _this.listAllTransactions.bind(_this);
+	    _this.resetMap = _this.resetMap.bind(_this);
 	    return _this;
 	  }
 
@@ -33460,19 +33726,20 @@
 	      var _this2 = this;
 
 	      this.props.db.get(month).then(function (doc) {
-	        _this2.renderData(doc, month, flatType);
+	        _this2.renderData(doc);
 	        if (doc.lastUpdate < _this2.props.lastUpdate) {
 	          _this2.getData(month).then(function (dataPoints) {
 	            doc.dataPoints = dataPoints;
 	            doc.lastUpdate = _this2.props.lastUpdate;
 	            _this2.props.db.put(doc).then(console.log.bind(console)).catch(console.error.bind(console));
-	            _this2.renderData(doc, month, flatType);
+	            _this2.renderData(doc);
 	          });
 	        }
 	      }).catch(function () {
 	        _this2.heatmap.setData([]);
-	        // this.loadingScreen.className = 'fa fa-spinner fa-pulse'
-	        // this.mapDiv.classList.add('chart-loading')
+	        _this2.setState({
+	          isLoading: true
+	        });
 	        _this2.getData(month).then(function (dataPoints) {
 	          var doc = {
 	            '_id': month,
@@ -33480,7 +33747,7 @@
 	            'dataPoints': dataPoints
 	          };
 	          _this2.props.db.put(doc).then(console.log.bind(console)).catch(console.error.bind(console));
-	          _this2.renderData(doc, month, flatType);
+	          _this2.renderData(doc);
 	        });
 	      });
 	    }
@@ -33527,20 +33794,21 @@
 	    }
 	  }, {
 	    key: 'renderData',
-	    value: function renderData(dataObj, month, flatType) {
-	      if (dataObj._id !== month) {
+	    value: function renderData(dataObj) {
+	      if (dataObj._id !== this.props.selectedMonth) {
 	        console.warn('overlapping queries');
 	        return;
 	      }
 
 	      var dataPoints = [];
-	      if (flatType !== 'ALL') {
-	        dataPoints = dataObj.dataPoints[flatType];
+	      if (this.props.selectedFlatType !== 'ALL') {
+	        dataPoints = dataObj.dataPoints[this.props.selectedFlatType];
 	      } else {
-	        for (var ft in dataObj.dataPoints) {
-	          dataPoints = dataPoints.concat(dataObj.dataPoints[ft]);
+	        for (var flatType in dataObj.dataPoints) {
+	          dataPoints = dataPoints.concat(dataObj.dataPoints[flatType]);
 	        }
 	      }
+
 	      if (dataPoints.length === 0) {
 	        console.warn('no data');
 	        return;
@@ -33552,9 +33820,11 @@
 	          weight: tick.weight
 	        };
 	      });
-	      // this.loadingScreen.className = 'fa'
-	      // this.mapDiv.classList.remove('chart-loading')
 	      this.heatmap.setData(ticks);
+
+	      this.setState({
+	        isLoading: false
+	      });
 	    }
 	  }, {
 	    key: 'resetMap',
@@ -33562,143 +33832,130 @@
 	      this.map.setCenter(this.mapCenter);
 	      this.map.setZoom(11);
 	    }
+	  }, {
+	    key: 'listAllTransactions',
+	    value: function listAllTransactions(lat, lng, month, flat_type) {
+	      var _this3 = this;
 
-	    // listAllTransactions (lat, lng, month, flat_type) {
-	    //   const url = window.location.protocol + '//' + window.location.host + '/nearby'
-	    //   window.fetch(url, {
-	    //     method: 'POST',
-	    //     headers: {
-	    //       'Accept': 'application/json',
-	    //       'Content-Type': 'application/json'
-	    //     },
-	    //     body: JSON.stringify({lat, lng, radius: 500})
-	    //   }).then(res => res.json()).then(json => {
-	    //     if (!json.length) {
-	    //       removeChildren(this.chartDetail)
-	    //       console.log('No result around selected location')
-	    //       return
-	    //     }
-	    //
-	    //     const resID = [
-	    //       '8c00bf08-9124-479e-aeca-7cc411d884c4',
-	    //       '83b2fc37-ce8c-4df4-968b-370fd818138b'
-	    //     ]
-	    //     const resource =
-	    //       month < '2012-03' ? resID[0] : resID[1]
-	    //     Promise.all(json.map(street_name => {
-	    //       const filters = {street_name, month}
-	    //       if (flat_type !== 'ALL') Object.assign(filters, {flat_type})
-	    //       const dataURL = 'https://data.gov.sg/api/action/datastore_search?resource_id=' +
-	    //         resource + '&filters=' + JSON.stringify(filters)
-	    //       return window.fetch(dataURL, { Accept: 'application/json' })
-	    //         .then(data => data.json())
-	    //     }))
-	    //     .then(results => results.reduce((records, res) => {
-	    //       if (res.result && res.result.records) {
-	    //         return records.concat(res.result.records)
-	    //       } else {
-	    //         return records
-	    //       }
-	    //     }, []))
-	    //     .then(records => {
-	    //       if (!json.length) {
-	    //         removeChildren(this.chartDetail)
-	    //         console.log('No result around selected location')
-	    //         return
-	    //       }
-	    //       this.chartDetail = document.getElementById('chart-detail')
-	    //       const table = document.createElement('table')
-	    //
-	    //       const tableTitle = document.createElement('h2')
-	    //       tableTitle.id = 'chart-detail-title'
-	    //       tableTitle.innerHTML =
-	    //         'Transactions Records in ' + getMonthYear(month) + ' around selected location'
-	    //       const thead = document.createElement('thead')
-	    //       const tr = document.createElement('tr')
-	    //       const headers = [
-	    //         '#',
-	    //         'Block',
-	    //         'Street Name',
-	    //         'Flat Type',
-	    //         'Storey Range',
-	    //         'Lease Commence',
-	    //         'Floor Area (sqm)',
-	    //         'Resale Price (SGD)'
-	    //       ]
-	    //
-	    //       headers.forEach(header => {
-	    //         const th = document.createElement('th')
-	    //         th.textContent = header
-	    //         tr.appendChild(th)
-	    //       })
-	    //       thead.appendChild(tr)
-	    //       table.appendChild(thead)
-	    //       const tbody = document.createElement('tbody')
-	    //       tbody.setAttribute('id', 'table-body')
-	    //       sortByOrder(records, record => +record.resale_price, 'desc')
-	    //         .forEach((transaction, index) => {
-	    //           const row = document.createElement('tr')
-	    //           row.classList.add('table-striped')
-	    //           let rowData = [
-	    //             index + 1,
-	    //             transaction.block.trim(),
-	    //             capitalizeFirstLetters(transaction.street_name.trim()),
-	    //             transaction.flat_type.trim(),
-	    //             transaction.storey_range.trim().toLowerCase(),
-	    //             transaction.lease_commence_date,
-	    //             transaction.floor_area_sqm,
-	    //             (+transaction.resale_price).toLocaleString()
-	    //           ]
-	    //           rowData.map(data => {
-	    //             const td = document.createElement('td')
-	    //             td.textContent = data
-	    //             return td
-	    //           }).forEach(td => row.appendChild(td))
-	    //           tbody.appendChild(row)
-	    //         })
-	    //       table.appendChild(tbody)
-	    //
-	    //       removeChildren(this.chartDetail)
-	    //
-	    //       this.chartDetail.appendChild(tableTitle)
-	    //       this.chartDetail.appendChild(table)
-	    //
-	    //       document.getElementById('chart-detail-title').scrollIntoView()
-	    //     })
-	    //   })
-	    // }
+	      //eslint-disable-line
+	      var url = window.location.protocol + '//' + window.location.host + '/nearby';
+	      window.fetch(url, {
+	        method: 'POST',
+	        headers: {
+	          'Accept': 'application/json',
+	          'Content-Type': 'application/json'
+	        },
+	        body: (0, _stringify2.default)({ lat: lat, lng: lng, radius: 500 })
+	      }).then(function (res) {
+	        return res.json();
+	      }).then(function (json) {
+	        if (!json.length) {
+	          _this3.setState({
+	            table: {
+	              title: '',
+	              colNames: [],
+	              rows: []
+	            }
+	          });
+	          console.log('No result around selected location');
+	          return;
+	        }
 
+	        var resID = ['8c00bf08-9124-479e-aeca-7cc411d884c4', '83b2fc37-ce8c-4df4-968b-370fd818138b'];
+	        var resource = month < '2012-03' ? resID[0] : resID[1];
+	        _promise2.default.all(json.map(function (street_name) {
+	          //eslint-disable-line
+	          var filters = { street_name: street_name, month: month };
+	          if (flat_type !== 'ALL') (0, _assign2.default)(filters, { flat_type: flat_type }); // eslint-disable-line
+	          var dataURL = 'https://data.gov.sg/api/action/datastore_search?resource_id=' + resource + '&filters=' + (0, _stringify2.default)(filters);
+	          return window.fetch(dataURL, { Accept: 'application/json' }).then(function (data) {
+	            return data.json();
+	          });
+	        })).then(function (results) {
+	          return results.reduce(function (records, res) {
+	            if (res.result && res.result.records) {
+	              return records.concat(res.result.records);
+	            } else {
+	              return records;
+	            }
+	          }, []);
+	        }).then(function (records) {
+	          if (!json.length) {
+	            _this3.setState({
+	              table: {
+	                title: '',
+	                colNames: [],
+	                rows: []
+	              }
+	            });
+	            console.log('No result around selected location');
+	            return;
+	          }
+
+	          var title = 'Transactions Records in ' + (0, _helpers.getMonthYear)(month) + ' around selected location';
+	          var colNames = ['#', 'Block', 'Street Name', 'Flat Type', 'Storey Range', 'Lease Commence', 'Floor Area (sqm)', 'Resale Price (SGD)'];
+
+	          var transactions = (0, _lodash2.default)(records, function (record) {
+	            return +record.resale_price;
+	          }, 'desc');
+	          var rows = transactions.map(function (transaction, index) {
+	            return [index + 1, transaction.block.trim(), (0, _helpers.capitalizeFirstLetters)(transaction.street_name.trim()), transaction.flat_type.trim(), transaction.storey_range.trim().toLowerCase(), transaction.lease_commence_date, transaction.floor_area_sqm, (+transaction.resale_price).toLocaleString()];
+	          });
+
+	          _this3.setState({
+	            table: { title: title, colNames: colNames, rows: rows }
+	          });
+	        });
+	      });
+	    }
 	  }, {
 	    key: 'componentDidMount',
 	    value: function componentDidMount() {
-	      var _this3 = this;
+	      var _this4 = this;
 
-	      window.googleMapsLoaded.then(function () {
-	        _this3.mapCenter = new google.maps.LatLng(1.352083, 103.819836);
-	        _this3.map = new google.maps.Map(_this3.refs.map, {
-	          center: _this3.mapCenter,
+	      var initMap = function initMap() {
+	        _this4.mapCenter = new google.maps.LatLng(1.352083, 103.819836);
+	        _this4.map = new google.maps.Map(_this4.refs.map, {
+	          center: _this4.mapCenter,
 	          zoom: 11,
 	          draggableCursor: 'crosshair',
 	          scrollwheel: false
 	        });
 
-	        _this3.heatmap = new google.maps.visualization.HeatmapLayer({
+	        _this4.heatmap = new google.maps.visualization.HeatmapLayer({
 	          radius: 7
 	        });
-	        _this3.heatmap.setMap(_this3.map);
+	        _this4.map.addListener('click', function (e) {
+	          var target = e.latLng;
+	          _this4.listAllTransactions(target.lat(), target.lng(), _this4.props.selectedMonth, _this4.props.selectedFlatType);
+	        });
+	        _this4.heatmap.setMap(_this4.map);
 
-	        _this3.plotHeatmap(_this3.props.selectedMonth, _this3.props.selectedFlatType);
-	      });
+	        _this4.plotHeatmap(_this4.props.selectedMonth, _this4.props.selectedFlatType);
+	      };
+	      if (window.googleMapsLoaded) initMap();else window.googleOnLoadCallback = initMap();
 	    }
 	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
 	      if (this.props.selectedMonth === nextProps.selectedMonth && this.props.selectedFlatType === nextProps.selectedFlatType) return;
+	      this.setState({
+	        table: {
+	          title: '',
+	          colNames: [],
+	          rows: []
+	        }
+	      });
 	      this.plotHeatmap(nextProps.selectedMonth, nextProps.selectedFlatType);
 	    }
 	  }, {
 	    key: 'render',
 	    value: function render() {
+	      var monthList = this.props.monthList;
+	      var currentMonthIndex = monthList.indexOf(this.props.selectedMonth);
+	      var prevMonth = monthList[Math.max(0, currentMonthIndex - 1)];
+	      var nextMonth = monthList[Math.min(monthList.length - 1, currentMonthIndex + 1)];
+
 	      return _react2.default.createElement(
 	        'main',
 	        null,
@@ -33711,44 +33968,51 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'chart-container' },
-	          _react2.default.createElement('div', { id: 'map', ref: 'map' })
+	          _react2.default.createElement('div', { id: 'map', ref: 'map' }),
+	          _react2.default.createElement(_Loader2.default, { hidden: !this.state.isLoading }),
+	          _react2.default.createElement(_IconButton2.default, { id: 'reset-map', icon: 'fa-crosshairs',
+	            handleClick: this.resetMap }),
+	          _react2.default.createElement(_IconButton2.default, { id: 'prev-month', icon: 'fa-angle-left',
+	            value: prevMonth, handleClick: this.props.updateMonth }),
+	          _react2.default.createElement(_IconButton2.default, { id: 'next-month', icon: 'fa-angle-right',
+	            value: nextMonth, handleClick: this.props.updateMonth })
 	        ),
-	        _react2.default.createElement('div', { className: 'chart-detail' })
+	        _react2.default.createElement(_Table2.default, this.state.table)
 	      );
 	    }
 	  }]);
 	  return Maps;
 	}(_react2.default.Component);
-	// import sortByOrder from 'lodash.sortbyorder';
-
 
 	exports.default = Maps;
 
 
 	Maps.propType = {
+	  monthList: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.string),
 	  selectedMonth: _react2.default.PropTypes.string,
 	  selectedFlatType: _react2.default.PropTypes.string,
-	  lastUpdate: _react2.default.PropTypes.lastUpdate
+	  lastUpdate: _react2.default.PropTypes.object,
+	  updateMonth: _react2.default.PropTypes.func
 	};
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Maps.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Maps.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 374 */
+/* 376 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = { "default": __webpack_require__(375), __esModule: true };
+	module.exports = { "default": __webpack_require__(377), __esModule: true };
 
 /***/ },
-/* 375 */
+/* 377 */
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(299);
 	__webpack_require__(286);
-	module.exports = __webpack_require__(376);
+	module.exports = __webpack_require__(378);
 
 /***/ },
-/* 376 */
+/* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var anObject = __webpack_require__(250)
@@ -33760,10 +34024,82 @@
 	};
 
 /***/ },
-/* 377 */
+/* 379 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _getPrototypeOf = __webpack_require__(317);
+
+	var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+	var _classCallCheck2 = __webpack_require__(320);
+
+	var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+	var _createClass2 = __webpack_require__(321);
+
+	var _createClass3 = _interopRequireDefault(_createClass2);
+
+	var _possibleConstructorReturn2 = __webpack_require__(325);
+
+	var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+	var _inherits2 = __webpack_require__(343);
+
+	var _inherits3 = _interopRequireDefault(_inherits2);
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var IconButton = function (_React$Component) {
+	  (0, _inherits3.default)(IconButton, _React$Component);
+
+	  function IconButton() {
+	    (0, _classCallCheck3.default)(this, IconButton);
+	    return (0, _possibleConstructorReturn3.default)(this, (0, _getPrototypeOf2.default)(IconButton).apply(this, arguments));
+	  }
+
+	  (0, _createClass3.default)(IconButton, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'button',
+	        { id: this.props.id, className: 'button',
+	          value: this.props.value, onClick: this.props.handleClick },
+	        _react2.default.createElement('i', { 'aria-hidden': 'true', className: 'fa ' + this.props.icon })
+	      );
+	    }
+	  }]);
+	  return IconButton;
+	}(_react2.default.Component);
+
+	exports.default = IconButton;
+
+
+	IconButton.propType = {
+	  value: _react2.default.PropTypes.string,
+	  handleClick: _react2.default.PropTypes.func,
+	  icon: _react2.default.PropTypes.icon,
+	  id: _react2.default.PropTypes.string
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "IconButton.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+
+/***/ },
+/* 380 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -34044,13 +34380,13 @@
 
 	exports.default = About;
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "About.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "About.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 378 */
+/* 381 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
+	/* REACT HOT LOADER */ if (false) { (function () { var ReactHotAPI = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-api/modules/index.js"), RootInstanceProvider = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/RootInstanceProvider.js"), ReactMount = require("react/lib/ReactMount"), React = require("react"); module.makeHot = module.hot.data ? module.hot.data.makeHot : ReactHotAPI(function () { return RootInstanceProvider.getRootInstances(ReactMount); }, React); })(); } try { (function () {
 
 	'use strict';
 
@@ -34104,18 +34440,20 @@
 	        );
 	      });
 	      return _react2.default.createElement(
-	        'form',
-	        { className: 'dropdown-list' },
-	        _react2.default.createElement(
-	          'select',
-	          { value: this.props.selectedValue, onChange: this.props.handleChange },
-	          listNodes
-	        )
+	        'select',
+	        { className: 'dropdown-select', value: this.props.selectedValue, onChange: this.props.handleChange },
+	        listNodes
 	      );
 	    }
 	  }]);
 	  return DropDownList;
 	}(_react2.default.Component);
+
+	DropDownList.propType = {
+	  selections: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.string),
+	  selectedValue: _react2.default.PropTypes.string,
+	  handleChange: _react2.default.PropTypes.func
+	};
 
 	var ChartSelector = exports.ChartSelector = function (_React$Component2) {
 	  (0, _inherits3.default)(ChartSelector, _React$Component2);
@@ -34136,19 +34474,32 @@
 	          { className: 'dropdown-title' },
 	          'Choose town & chart type'
 	        ),
-	        _react2.default.createElement(DropDownList, {
-	          selections: this.props.townList,
-	          selectedValue: this.props.selectedTown,
-	          handleChange: this.props.updateTown }),
-	        _react2.default.createElement(DropDownList, {
-	          selections: this.props.chartType,
-	          selectedValue: this.props.selectedChartType,
-	          handleChange: this.props.updateChartType })
+	        _react2.default.createElement(
+	          'form',
+	          { className: 'dropdown-list' },
+	          _react2.default.createElement(DropDownList, {
+	            selections: this.props.townList,
+	            selectedValue: this.props.selectedTown,
+	            handleChange: this.props.updateTown }),
+	          _react2.default.createElement(DropDownList, {
+	            selections: this.props.chartType,
+	            selectedValue: this.props.selectedChartType,
+	            handleChange: this.props.updateChartType })
+	        )
 	      );
 	    }
 	  }]);
 	  return ChartSelector;
 	}(_react2.default.Component);
+
+	ChartSelector.propType = {
+	  townList: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.string),
+	  chartType: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.string),
+	  selectedTown: _react2.default.PropTypes.string,
+	  selectedChartType: _react2.default.PropTypes.string,
+	  updateTown: _react2.default.PropTypes.func,
+	  updateChartType: _react2.default.PropTypes.func
+	};
 
 	var MapSelector = exports.MapSelector = function (_React$Component3) {
 	  (0, _inherits3.default)(MapSelector, _React$Component3);
@@ -34169,33 +34520,46 @@
 	          { className: 'dropdown-title' },
 	          'Choose month & flat type'
 	        ),
-	        _react2.default.createElement(DropDownList, {
-	          selections: this.props.monthList,
-	          selectedValue: this.props.selectedMonth,
-	          handleChange: this.props.updateMonth }),
-	        _react2.default.createElement(DropDownList, {
-	          selections: this.props.flatType,
-	          selectedValue: this.props.selectedFlatType,
-	          handleChange: this.props.updateFlatType })
+	        _react2.default.createElement(
+	          'form',
+	          { className: 'dropdown-list' },
+	          _react2.default.createElement(DropDownList, {
+	            selections: this.props.monthList,
+	            selectedValue: this.props.selectedMonth,
+	            handleChange: this.props.updateMonth }),
+	          _react2.default.createElement(DropDownList, {
+	            selections: this.props.flatType,
+	            selectedValue: this.props.selectedFlatType,
+	            handleChange: this.props.updateFlatType })
+	        )
 	      );
 	    }
 	  }]);
 	  return MapSelector;
 	}(_react2.default.Component);
 
-	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/Users/hongkheng/Documents/codeprojects/hdb-resale-projects/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Selectors.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
+	MapSelector.propType = {
+	  monthList: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.string),
+	  flatType: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.string),
+	  selectedMonth: _react2.default.PropTypes.string,
+	  selectedFlatType: _react2.default.PropTypes.string,
+	  updateMonth: _react2.default.PropTypes.func,
+	  updateFlatType: _react2.default.PropTypes.func
+	};
+
+	/* REACT HOT LOADER */ }).call(this); } finally { if (false) { (function () { var foundReactClasses = module.hot.data && module.hot.data.foundReactClasses || false; if (module.exports && module.makeHot) { var makeExportsHot = require("/home/yongjun21/GitHub/hongkheng/hdb-resale/node_modules/react-hot-loader/makeExportsHot.js"); if (makeExportsHot(module, require("react"))) { foundReactClasses = true; } var shouldAcceptModule = true && foundReactClasses; if (shouldAcceptModule) { module.hot.accept(function (err) { if (err) { console.error("Cannot not apply hot update to " + "Selectors.jsx" + ": " + err.message); } }); } } module.hot.dispose(function (data) { data.makeHot = module.makeHot; data.foundReactClasses = foundReactClasses; }); })(); } }
 
 /***/ },
-/* 379 */
+/* 382 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(380);
+	var content = __webpack_require__(383);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(382)(content, {});
+	var update = __webpack_require__(385)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -34212,21 +34576,21 @@
 	}
 
 /***/ },
-/* 380 */
+/* 383 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(381)();
+	exports = module.exports = __webpack_require__(384)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "/*! normalize.css v4.1.1 | MIT License | github.com/necolas/normalize.css */\n\n/**\n * 1. Change the default font family in all browsers (opinionated).\n * 2. Prevent adjustments of font size after orientation changes in IE and iOS.\n */\n\nhtml {\n  font-family: sans-serif; /* 1 */\n  -ms-text-size-adjust: 100%; /* 2 */\n  -webkit-text-size-adjust: 100%; /* 2 */\n}\n\n/**\n * Remove the margin in all browsers (opinionated).\n */\n\nbody {\n  margin: 0;\n}\n\n/* HTML5 display definitions\n   ========================================================================== */\n\n/**\n * Add the correct display in IE 9-.\n * 1. Add the correct display in Edge, IE, and Firefox.\n * 2. Add the correct display in IE.\n */\n\narticle,\naside,\ndetails, /* 1 */\nfigcaption,\nfigure,\nfooter,\nheader,\nmain, /* 2 */\nmenu,\nnav,\nsection,\nsummary { /* 1 */\n  display: block;\n}\n\n/**\n * Add the correct display in IE 9-.\n */\n\naudio,\ncanvas,\nprogress,\nvideo {\n  display: inline-block;\n}\n\n/**\n * Add the correct display in iOS 4-7.\n */\n\naudio:not([controls]) {\n  display: none;\n  height: 0;\n}\n\n/**\n * Add the correct vertical alignment in Chrome, Firefox, and Opera.\n */\n\nprogress {\n  vertical-align: baseline;\n}\n\n/**\n * Add the correct display in IE 10-.\n * 1. Add the correct display in IE.\n */\n\ntemplate, /* 1 */\n[hidden] {\n  display: none;\n}\n\n/* Links\n   ========================================================================== */\n\n/**\n * 1. Remove the gray background on active links in IE 10.\n * 2. Remove gaps in links underline in iOS 8+ and Safari 8+.\n */\n\na {\n  background-color: transparent; /* 1 */\n  -webkit-text-decoration-skip: objects; /* 2 */\n}\n\n/**\n * Remove the outline on focused links when they are also active or hovered\n * in all browsers (opinionated).\n */\n\na:active,\na:hover {\n  outline-width: 0;\n}\n\n/* Text-level semantics\n   ========================================================================== */\n\n/**\n * 1. Remove the bottom border in Firefox 39-.\n * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.\n */\n\nabbr[title] {\n  border-bottom: none; /* 1 */\n  text-decoration: underline; /* 2 */\n  text-decoration: underline dotted; /* 2 */\n}\n\n/**\n * Prevent the duplicate application of `bolder` by the next rule in Safari 6.\n */\n\nb,\nstrong {\n  font-weight: inherit;\n}\n\n/**\n * Add the correct font weight in Chrome, Edge, and Safari.\n */\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/**\n * Add the correct font style in Android 4.3-.\n */\n\ndfn {\n  font-style: italic;\n}\n\n/**\n * Correct the font size and margin on `h1` elements within `section` and\n * `article` contexts in Chrome, Firefox, and Safari.\n */\n\nh1 {\n  font-size: 2em;\n  margin: 0.67em 0;\n}\n\n/**\n * Add the correct background and color in IE 9-.\n */\n\nmark {\n  background-color: #ff0;\n  color: #000;\n}\n\n/**\n * Add the correct font size in all browsers.\n */\n\nsmall {\n  font-size: 80%;\n}\n\n/**\n * Prevent `sub` and `sup` elements from affecting the line height in\n * all browsers.\n */\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/* Embedded content\n   ========================================================================== */\n\n/**\n * Remove the border on images inside links in IE 10-.\n */\n\nimg {\n  border-style: none;\n}\n\n/**\n * Hide the overflow in IE.\n */\n\nsvg:not(:root) {\n  overflow: hidden;\n}\n\n/* Grouping content\n   ========================================================================== */\n\n/**\n * 1. Correct the inheritance and scaling of font size in all browsers.\n * 2. Correct the odd `em` font sizing in all browsers.\n */\n\ncode,\nkbd,\npre,\nsamp {\n  font-family: monospace, monospace; /* 1 */\n  font-size: 1em; /* 2 */\n}\n\n/**\n * Add the correct margin in IE 8.\n */\n\nfigure {\n  margin: 1em 40px;\n}\n\n/**\n * 1. Add the correct box sizing in Firefox.\n * 2. Show the overflow in Edge and IE.\n */\n\nhr {\n  box-sizing: content-box; /* 1 */\n  height: 0; /* 1 */\n  overflow: visible; /* 2 */\n}\n\n/* Forms\n   ========================================================================== */\n\n/**\n * 1. Change font properties to `inherit` in all browsers (opinionated).\n * 2. Remove the margin in Firefox and Safari.\n */\n\nbutton,\ninput,\nselect,\ntextarea {\n  font: inherit; /* 1 */\n  margin: 0; /* 2 */\n}\n\n/**\n * Restore the font weight unset by the previous rule.\n */\n\noptgroup {\n  font-weight: bold;\n}\n\n/**\n * Show the overflow in IE.\n * 1. Show the overflow in Edge.\n */\n\nbutton,\ninput { /* 1 */\n  overflow: visible;\n}\n\n/**\n * Remove the inheritance of text transform in Edge, Firefox, and IE.\n * 1. Remove the inheritance of text transform in Firefox.\n */\n\nbutton,\nselect { /* 1 */\n  text-transform: none;\n}\n\n/**\n * 1. Prevent a WebKit bug where (2) destroys native `audio` and `video`\n *    controls in Android 4.\n * 2. Correct the inability to style clickable types in iOS and Safari.\n */\n\nbutton,\nhtml [type=\"button\"], /* 1 */\n[type=\"reset\"],\n[type=\"submit\"] {\n  -webkit-appearance: button; /* 2 */\n}\n\n/**\n * Remove the inner border and padding in Firefox.\n */\n\nbutton::-moz-focus-inner,\n[type=\"button\"]::-moz-focus-inner,\n[type=\"reset\"]::-moz-focus-inner,\n[type=\"submit\"]::-moz-focus-inner {\n  border-style: none;\n  padding: 0;\n}\n\n/**\n * Restore the focus styles unset by the previous rule.\n */\n\nbutton:-moz-focusring,\n[type=\"button\"]:-moz-focusring,\n[type=\"reset\"]:-moz-focusring,\n[type=\"submit\"]:-moz-focusring {\n  outline: 1px dotted ButtonText;\n}\n\n/**\n * Change the border, margin, and padding in all browsers (opinionated).\n */\n\nfieldset {\n  border: 1px solid #c0c0c0;\n  margin: 0 2px;\n  padding: 0.35em 0.625em 0.75em;\n}\n\n/**\n * 1. Correct the text wrapping in Edge and IE.\n * 2. Correct the color inheritance from `fieldset` elements in IE.\n * 3. Remove the padding so developers are not caught out when they zero out\n *    `fieldset` elements in all browsers.\n */\n\nlegend {\n  box-sizing: border-box; /* 1 */\n  color: inherit; /* 2 */\n  display: table; /* 1 */\n  max-width: 100%; /* 1 */\n  padding: 0; /* 3 */\n  white-space: normal; /* 1 */\n}\n\n/**\n * Remove the default vertical scrollbar in IE.\n */\n\ntextarea {\n  overflow: auto;\n}\n\n/**\n * 1. Add the correct box sizing in IE 10-.\n * 2. Remove the padding in IE 10-.\n */\n\n[type=\"checkbox\"],\n[type=\"radio\"] {\n  box-sizing: border-box; /* 1 */\n  padding: 0; /* 2 */\n}\n\n/**\n * Correct the cursor style of increment and decrement buttons in Chrome.\n */\n\n[type=\"number\"]::-webkit-inner-spin-button,\n[type=\"number\"]::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/**\n * 1. Correct the odd appearance in Chrome and Safari.\n * 2. Correct the outline style in Safari.\n */\n\n[type=\"search\"] {\n  -webkit-appearance: textfield; /* 1 */\n  outline-offset: -2px; /* 2 */\n}\n\n/**\n * Remove the inner padding and cancel buttons in Chrome and Safari on OS X.\n */\n\n[type=\"search\"]::-webkit-search-cancel-button,\n[type=\"search\"]::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/**\n * Correct the text style of placeholders in Chrome, Edge, and Safari.\n */\n\n::-webkit-input-placeholder {\n  color: inherit;\n  opacity: 0.54;\n}\n\n/**\n * 1. Correct the inability to style clickable types in iOS and Safari.\n * 2. Change font properties to `inherit` in Safari.\n */\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button; /* 1 */\n  font: inherit; /* 2 */\n}\n\nhtml {\n  min-height: 100%;\n}\n\nbody {\n  font-family: 'Oxygen', -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial,sans-serif;\n  padding: 0;\n  box-sizing: border-box;\n  height: 100vh;\n}\n\n#root {\n  height: 100%;\n}\n\n.container {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  height: 100%;\n}\n\n.header {\n  position: fixed;\n  top: 0;\n  z-index: 10;\n  background: #2f4f4f;\n  padding: 1em 2vw;\n  color: #fff;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n  width: 100%;\n  box-sizing: border-box;\n}\n\nmain {\n  margin-top: 4em;\n  box-sizing: border-box;\n  -webkit-box-flex: 1;\n      -ms-flex: 1;\n          flex: 1;\n}\n\n.navlist {\n  list-style: none;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  margin: 0;\n  padding: 0;\n}\n\n.navlist li a {\n  text-decoration: none;\n  color: #fff;\n  margin: 0 1em;\n  padding: 0.25em 0;\n}\n\n.listType {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n}\n\n.dropdown-title {\n  padding: 0;\n  margin: 0;\n}\n\n.chart-title {\n  text-align: center;\n}\n\n.chart-container {\n  min-height: 500px;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n}\n\n#map {\n  width: 100%;\n  height: 70vh;\n  min-height: 500px;\n}\n\n.about {\n  max-width: 1000px;\n  width: 90vw;\n  margin: 0 auto;\n}\n\n.img-ctn {\n  text-align: center;\n}\n\n.dropdown-title {\n  margin-right: 0.5em;\n}\n\n.dropdown-list {\n  margin-right: 0.5em;\n}\n\nfooter {\n  background: #a9a9a9;\n  -webkit-box-flex: 0;\n      -ms-flex: 0 auto;\n          flex: 0 auto;\n  bottom: 0;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-pack: distribute;\n      justify-content: space-around;\n  width: 100%;\n  padding: 0.5em 0;\n  box-sizing: border-box;\n  min-height: 40px;\n}\n\n.footer-text {\n  padding: 0.5em;\n  margin: 0;\n  font-size: 0.6em;\n  box-sizing: border-box;\n}\n\n.footer-text a {\n  display: inline-block;\n  box-sizing: border-box;\n}\n\n.terms {\n  position: fixed;\n  top: 0;\n  z-index: 1;\n  background: #fff;\n  margin: 20vh 5vw 0;\n  padding: 5vw;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  border: 2px solid #2f4f4f;\n}\n.terms p {\n  -ms-flex-item-align: start;\n      align-self: flex-start;\n}\n.terms.hidden {\n  display: none;\n}", ""]);
+	exports.push([module.id, "/*! normalize.css v4.1.1 | MIT License | github.com/necolas/normalize.css */\n\n/**\n * 1. Change the default font family in all browsers (opinionated).\n * 2. Prevent adjustments of font size after orientation changes in IE and iOS.\n */\n\nhtml {\n  font-family: sans-serif; /* 1 */\n  -ms-text-size-adjust: 100%; /* 2 */\n  -webkit-text-size-adjust: 100%; /* 2 */\n}\n\n/**\n * Remove the margin in all browsers (opinionated).\n */\n\nbody {\n  margin: 0;\n}\n\n/* HTML5 display definitions\n   ========================================================================== */\n\n/**\n * Add the correct display in IE 9-.\n * 1. Add the correct display in Edge, IE, and Firefox.\n * 2. Add the correct display in IE.\n */\n\narticle,\naside,\ndetails, /* 1 */\nfigcaption,\nfigure,\nfooter,\nheader,\nmain, /* 2 */\nmenu,\nnav,\nsection,\nsummary { /* 1 */\n  display: block;\n}\n\n/**\n * Add the correct display in IE 9-.\n */\n\naudio,\ncanvas,\nprogress,\nvideo {\n  display: inline-block;\n}\n\n/**\n * Add the correct display in iOS 4-7.\n */\n\naudio:not([controls]) {\n  display: none;\n  height: 0;\n}\n\n/**\n * Add the correct vertical alignment in Chrome, Firefox, and Opera.\n */\n\nprogress {\n  vertical-align: baseline;\n}\n\n/**\n * Add the correct display in IE 10-.\n * 1. Add the correct display in IE.\n */\n\ntemplate, /* 1 */\n[hidden] {\n  display: none;\n}\n\n/* Links\n   ========================================================================== */\n\n/**\n * 1. Remove the gray background on active links in IE 10.\n * 2. Remove gaps in links underline in iOS 8+ and Safari 8+.\n */\n\na {\n  background-color: transparent; /* 1 */\n  -webkit-text-decoration-skip: objects; /* 2 */\n}\n\n/**\n * Remove the outline on focused links when they are also active or hovered\n * in all browsers (opinionated).\n */\n\na:active,\na:hover {\n  outline-width: 0;\n}\n\n/* Text-level semantics\n   ========================================================================== */\n\n/**\n * 1. Remove the bottom border in Firefox 39-.\n * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.\n */\n\nabbr[title] {\n  border-bottom: none; /* 1 */\n  text-decoration: underline; /* 2 */\n  text-decoration: underline dotted; /* 2 */\n}\n\n/**\n * Prevent the duplicate application of `bolder` by the next rule in Safari 6.\n */\n\nb,\nstrong {\n  font-weight: inherit;\n}\n\n/**\n * Add the correct font weight in Chrome, Edge, and Safari.\n */\n\nb,\nstrong {\n  font-weight: bolder;\n}\n\n/**\n * Add the correct font style in Android 4.3-.\n */\n\ndfn {\n  font-style: italic;\n}\n\n/**\n * Correct the font size and margin on `h1` elements within `section` and\n * `article` contexts in Chrome, Firefox, and Safari.\n */\n\nh1 {\n  font-size: 2em;\n  margin: 0.67em 0;\n}\n\n/**\n * Add the correct background and color in IE 9-.\n */\n\nmark {\n  background-color: #ff0;\n  color: #000;\n}\n\n/**\n * Add the correct font size in all browsers.\n */\n\nsmall {\n  font-size: 80%;\n}\n\n/**\n * Prevent `sub` and `sup` elements from affecting the line height in\n * all browsers.\n */\n\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline;\n}\n\nsub {\n  bottom: -0.25em;\n}\n\nsup {\n  top: -0.5em;\n}\n\n/* Embedded content\n   ========================================================================== */\n\n/**\n * Remove the border on images inside links in IE 10-.\n */\n\nimg {\n  border-style: none;\n}\n\n/**\n * Hide the overflow in IE.\n */\n\nsvg:not(:root) {\n  overflow: hidden;\n}\n\n/* Grouping content\n   ========================================================================== */\n\n/**\n * 1. Correct the inheritance and scaling of font size in all browsers.\n * 2. Correct the odd `em` font sizing in all browsers.\n */\n\ncode,\nkbd,\npre,\nsamp {\n  font-family: monospace, monospace; /* 1 */\n  font-size: 1em; /* 2 */\n}\n\n/**\n * Add the correct margin in IE 8.\n */\n\nfigure {\n  margin: 1em 40px;\n}\n\n/**\n * 1. Add the correct box sizing in Firefox.\n * 2. Show the overflow in Edge and IE.\n */\n\nhr {\n  box-sizing: content-box; /* 1 */\n  height: 0; /* 1 */\n  overflow: visible; /* 2 */\n}\n\n/* Forms\n   ========================================================================== */\n\n/**\n * 1. Change font properties to `inherit` in all browsers (opinionated).\n * 2. Remove the margin in Firefox and Safari.\n */\n\nbutton,\ninput,\nselect,\ntextarea {\n  font: inherit; /* 1 */\n  margin: 0; /* 2 */\n}\n\n/**\n * Restore the font weight unset by the previous rule.\n */\n\noptgroup {\n  font-weight: bold;\n}\n\n/**\n * Show the overflow in IE.\n * 1. Show the overflow in Edge.\n */\n\nbutton,\ninput { /* 1 */\n  overflow: visible;\n}\n\n/**\n * Remove the inheritance of text transform in Edge, Firefox, and IE.\n * 1. Remove the inheritance of text transform in Firefox.\n */\n\nbutton,\nselect { /* 1 */\n  text-transform: none;\n}\n\n/**\n * 1. Prevent a WebKit bug where (2) destroys native `audio` and `video`\n *    controls in Android 4.\n * 2. Correct the inability to style clickable types in iOS and Safari.\n */\n\nbutton,\nhtml [type=\"button\"], /* 1 */\n[type=\"reset\"],\n[type=\"submit\"] {\n  -webkit-appearance: button; /* 2 */\n}\n\n/**\n * Remove the inner border and padding in Firefox.\n */\n\nbutton::-moz-focus-inner,\n[type=\"button\"]::-moz-focus-inner,\n[type=\"reset\"]::-moz-focus-inner,\n[type=\"submit\"]::-moz-focus-inner {\n  border-style: none;\n  padding: 0;\n}\n\n/**\n * Restore the focus styles unset by the previous rule.\n */\n\nbutton:-moz-focusring,\n[type=\"button\"]:-moz-focusring,\n[type=\"reset\"]:-moz-focusring,\n[type=\"submit\"]:-moz-focusring {\n  outline: 1px dotted ButtonText;\n}\n\n/**\n * Change the border, margin, and padding in all browsers (opinionated).\n */\n\nfieldset {\n  border: 1px solid #c0c0c0;\n  margin: 0 2px;\n  padding: 0.35em 0.625em 0.75em;\n}\n\n/**\n * 1. Correct the text wrapping in Edge and IE.\n * 2. Correct the color inheritance from `fieldset` elements in IE.\n * 3. Remove the padding so developers are not caught out when they zero out\n *    `fieldset` elements in all browsers.\n */\n\nlegend {\n  box-sizing: border-box; /* 1 */\n  color: inherit; /* 2 */\n  display: table; /* 1 */\n  max-width: 100%; /* 1 */\n  padding: 0; /* 3 */\n  white-space: normal; /* 1 */\n}\n\n/**\n * Remove the default vertical scrollbar in IE.\n */\n\ntextarea {\n  overflow: auto;\n}\n\n/**\n * 1. Add the correct box sizing in IE 10-.\n * 2. Remove the padding in IE 10-.\n */\n\n[type=\"checkbox\"],\n[type=\"radio\"] {\n  box-sizing: border-box; /* 1 */\n  padding: 0; /* 2 */\n}\n\n/**\n * Correct the cursor style of increment and decrement buttons in Chrome.\n */\n\n[type=\"number\"]::-webkit-inner-spin-button,\n[type=\"number\"]::-webkit-outer-spin-button {\n  height: auto;\n}\n\n/**\n * 1. Correct the odd appearance in Chrome and Safari.\n * 2. Correct the outline style in Safari.\n */\n\n[type=\"search\"] {\n  -webkit-appearance: textfield; /* 1 */\n  outline-offset: -2px; /* 2 */\n}\n\n/**\n * Remove the inner padding and cancel buttons in Chrome and Safari on OS X.\n */\n\n[type=\"search\"]::-webkit-search-cancel-button,\n[type=\"search\"]::-webkit-search-decoration {\n  -webkit-appearance: none;\n}\n\n/**\n * Correct the text style of placeholders in Chrome, Edge, and Safari.\n */\n\n::-webkit-input-placeholder {\n  color: inherit;\n  opacity: 0.54;\n}\n\n/**\n * 1. Correct the inability to style clickable types in iOS and Safari.\n * 2. Change font properties to `inherit` in Safari.\n */\n\n::-webkit-file-upload-button {\n  -webkit-appearance: button; /* 1 */\n  font: inherit; /* 2 */\n}\n\nhtml {\n  height: 100%;\n}\n\nbody {\n  font-family: 'Oxygen', -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, Helvetica, Arial,sans-serif;\n  padding: 0;\n  box-sizing: border-box;\n  min-height: 100%;\n}\n\n#root, .container {\n  min-height: 100vh;\n}\n\n.container {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n}\n\n.header {\n  position: fixed;\n  top: 0;\n  z-index: 10;\n  background: #2f4f4f;\n  color: #fff;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: justify;\n      -ms-flex-pack: justify;\n          justify-content: space-between;\n  width: 100%;\n  box-sizing: border-box;\n}\n\nmain {\n  padding-top: 4em;\n  box-sizing: border-box;\n  -webkit-box-flex: 1;\n      -ms-flex: 1 0 auto;\n          flex: 1 0 auto;\n  box-sizing: border-box;\n}\n\n.navlist {\n  list-style: none;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-pack: distribute;\n      justify-content: space-around;\n  background: #2f4f4f;\n  padding: 1em 2vw;\n  margin: 0;\n  box-sizing: border-box;\n}\n\n.navlist li {\n  margin: 0 1em;\n  padding: 0.25em 0;\n}\n\n.navlist li a {\n  text-decoration: none;\n  color: #fff;\n}\n\n.listType {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-flow: row wrap;\n      flex-flow: row wrap;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  padding: 1em 2vw;\n}\n\n.dropdown-title {\n  padding: 0;\n  margin: 0;\n}\n\n.chart-title {\n  text-align: center;\n}\n\n.chart-container {\n  position: relative;\n  min-height: 500px;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  width: 96vw;\n  margin: 0 auto;\n}\n\n#map {\n  width: 100%;\n  height: 70vh;\n  min-height: 500px;\n}\n\n.about {\n  max-width: 1000px;\n  width: 90vw;\n  margin: 0 auto;\n}\n\n.img-ctn {\n  text-align: center;\n}\n\n.dropdown-title {\n  margin: 0 0.5em;\n  padding: 0.25em 0;\n}\n\n.dropdown-select {\n  margin: 0 0.5em;\n  padding: 0.25em 0;\n}\n\n.dropdown-list {\n  display: inline-block;\n  margin: 0;\n}\n\n.button {\n  position: absolute;\n  z-index: 1;\n  width: 7vh;\n  height: 7vh;\n  min-width: 50px;\n  min-height: 50px;\n  border: none;\n  background-color: #789;\n  opacity: 0.5;\n  color: #fff;\n  cursor: pointer;\n}\n.loader-overlay {\n  position: absolute;\n  top: 0;\n  bottom: 0;\n  left: 0;\n  right: 0;\n  width: 100%;\n  min-height: 500px;\n  background: rgba(255, 255, 255, 0.5);\n}\n.loading {\n  position: absolute;\n  z-index: -1;\n  left: 50%;\n  top: 50%;\n  width: 150px;\n  height: 150px;\n  font-size: 120px;\n  line-height: 150px;\n  text-align: center;\n  margin-left: -75px;\n  margin-top: -75px;\n  color: #2f4f4f;\n  opacity: 0.8;\n}\n.loading.fa-spinner {\n  z-index: 1;\n}\n#reset-map {\n  bottom: 0;\n  left: 50%;\n  margin-left: -3.5vh;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-pack: center;\n      -ms-flex-pack: center;\n          justify-content: center;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n}\n#reset-map::before {\n  height: 1em;\n  width: 1em;\n  font-weight: lighter;\n}\n#prev-month {\n  top: 31.5vh;\n  left: 0;\n}\n#next-month {\n  top: 31.5vh;\n  right: 0;\n}\n\n.footer {\n  background: #a9a9a9;\n  bottom: 0;\n  -webkit-box-flex: 0;\n      -ms-flex: none;\n          flex: none;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-pack: distribute;\n      justify-content: space-around;\n  -ms-flex-wrap: wrap;\n      flex-wrap: wrap;\n  width: 100%;\n  padding: 0.5em 0;\n  margin: 0;\n  box-sizing: border-box;\n  min-height: 40px;\n}\n\n.footer-text {\n/*  padding: 0.5em;*/\n  margin: 0.5em;\n  font-size: 0.6em;\n  box-sizing: border-box;\n}\n\n.footer-text a {\n  text-decoration: none;\n  display: inline-block;\n  box-sizing: border-box;\n}\n\n.terms {\n  position: fixed;\n  top: 0;\n  z-index: 1;\n  background: #fff;\n  margin: 20vh 5vw 0;\n  padding: 5vw;\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: vertical;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: column;\n          flex-direction: column;\n  -webkit-box-align: center;\n      -ms-flex-align: center;\n          align-items: center;\n  border: 2px solid #2f4f4f;\n}\n.terms p {\n  -ms-flex-item-align: start;\n      align-self: flex-start;\n}\n.terms.hidden {\n  display: none;\n}\n\n@media (max-width: 900px) {\n  .header {\n    -webkit-box-orient: vertical;\n    -webkit-box-direction: normal;\n        -ms-flex-direction: column;\n            flex-direction: column;\n    background: #fff;\n  }\n\n  .navlist {\n    padding: 0.8em 2vw;\n    font-size: 1.2em;\n  }\n\n  .listType {\n    color: #000;\n    padding: 1em 2vw;\n  }\n\n  main {\n    padding-top: 6em;\n  }\n\n  .chart-title {\n    margin-top: 4.33em;\n    font-size: 1.33em;\n  }\n}\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 381 */
+/* 384 */
 /***/ function(module, exports) {
 
 	/*
@@ -34282,7 +34646,7 @@
 
 
 /***/ },
-/* 382 */
+/* 385 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -34534,25 +34898,25 @@
 
 
 /***/ },
-/* 383 */
+/* 386 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process, global) {'use strict';
 
 	function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-	var jsExtend = __webpack_require__(384);
-	var debug = _interopDefault(__webpack_require__(385));
-	var inherits = _interopDefault(__webpack_require__(388));
-	var lie = _interopDefault(__webpack_require__(389));
-	var pouchdbCollections = __webpack_require__(391);
-	var getArguments = _interopDefault(__webpack_require__(392));
-	var events = __webpack_require__(393);
-	var scopedEval = _interopDefault(__webpack_require__(394));
-	var Md5 = _interopDefault(__webpack_require__(395));
-	var vuvuzela = _interopDefault(__webpack_require__(396));
-	var PromisePool = _interopDefault(__webpack_require__(397));
-	var pouchdbCollate = __webpack_require__(398);
+	var jsExtend = __webpack_require__(387);
+	var debug = _interopDefault(__webpack_require__(388));
+	var inherits = _interopDefault(__webpack_require__(391));
+	var lie = _interopDefault(__webpack_require__(392));
+	var pouchdbCollections = __webpack_require__(394);
+	var getArguments = _interopDefault(__webpack_require__(395));
+	var events = __webpack_require__(396);
+	var scopedEval = _interopDefault(__webpack_require__(397));
+	var Md5 = _interopDefault(__webpack_require__(398));
+	var vuvuzela = _interopDefault(__webpack_require__(399));
+	var PromisePool = _interopDefault(__webpack_require__(400));
+	var pouchdbCollate = __webpack_require__(401);
 
 	/* istanbul ignore next */
 	var PouchPromise = typeof Promise === 'function' ? Promise : lie;
@@ -45228,7 +45592,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), (function() { return this; }())))
 
 /***/ },
-/* 384 */
+/* 387 */
 /***/ function(module, exports) {
 
 	(function() { 
@@ -45261,7 +45625,7 @@
 	}).call(this);
 
 /***/ },
-/* 385 */
+/* 388 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -45271,7 +45635,7 @@
 	 * Expose `debug()` as the module.
 	 */
 
-	exports = module.exports = __webpack_require__(386);
+	exports = module.exports = __webpack_require__(389);
 	exports.log = log;
 	exports.formatArgs = formatArgs;
 	exports.save = save;
@@ -45435,7 +45799,7 @@
 
 
 /***/ },
-/* 386 */
+/* 389 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -45451,7 +45815,7 @@
 	exports.disable = disable;
 	exports.enable = enable;
 	exports.enabled = enabled;
-	exports.humanize = __webpack_require__(387);
+	exports.humanize = __webpack_require__(390);
 
 	/**
 	 * The currently active debug mode names, and names to skip.
@@ -45638,7 +46002,7 @@
 
 
 /***/ },
-/* 387 */
+/* 390 */
 /***/ function(module, exports) {
 
 	/**
@@ -45769,7 +46133,7 @@
 
 
 /***/ },
-/* 388 */
+/* 391 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -45798,11 +46162,11 @@
 
 
 /***/ },
-/* 389 */
+/* 392 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
-	var immediate = __webpack_require__(390);
+	var immediate = __webpack_require__(393);
 
 	/* istanbul ignore next */
 	function INTERNAL() {}
@@ -46083,7 +46447,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 390 */
+/* 393 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -46159,7 +46523,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 391 */
+/* 394 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -46234,7 +46598,7 @@
 
 
 /***/ },
-/* 392 */
+/* 395 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -46258,7 +46622,7 @@
 	}
 
 /***/ },
-/* 393 */
+/* 396 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -46566,7 +46930,7 @@
 
 
 /***/ },
-/* 394 */
+/* 397 */
 /***/ function(module, exports) {
 
 	// Generated by CoffeeScript 1.9.2
@@ -46594,7 +46958,7 @@
 
 
 /***/ },
-/* 395 */
+/* 398 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function (factory) {
@@ -47303,7 +47667,7 @@
 
 
 /***/ },
-/* 396 */
+/* 399 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -47482,7 +47846,7 @@
 
 
 /***/ },
-/* 397 */
+/* 400 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
@@ -47704,7 +48068,7 @@
 
 
 /***/ },
-/* 398 */
+/* 401 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -47713,7 +48077,7 @@
 	var MAGNITUDE_DIGITS = 3; // ditto
 	var SEP = ''; // set to '_' for easier debugging 
 
-	var utils = __webpack_require__(399);
+	var utils = __webpack_require__(402);
 
 	exports.collate = function (a, b) {
 
@@ -48063,7 +48427,7 @@
 
 
 /***/ },
-/* 399 */
+/* 402 */
 /***/ function(module, exports) {
 
 	'use strict';

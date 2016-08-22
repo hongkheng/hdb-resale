@@ -13,3 +13,7 @@ export default class Terms extends React.Component {
     );
   }
 }
+
+Terms.propType = {
+  handleAccept: React.PropTypes.func
+};

@@ -7,12 +7,11 @@
     "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
     "start:dev": "npm run build:dev && npm run start-server",
     "start:prod": "npm run build:release && npm run start-server",
-    "webpack:dev": "webpack-dev-server --host 0.0.0.0 --port 9000 --progress --colors --hot --inline --config ./webpack.dev.config.js",
     "start-server": "node server_dist/server.js",
     "build:dev": "npm run clean && npm run build-server",
     "build:release": "npm run clean && npm run build-server && npm run build-js",
-    "build-server": "babel server_src --out-dir server_dist",
     "clean": "rm -rf server_dist",
+    "build-server": "babel server_src --out-dir server_dist",
     "build-js": "webpack --progress --colors --config ./webpack.prod.config.js"
   },
   "contributors": [
