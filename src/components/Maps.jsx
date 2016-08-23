@@ -168,7 +168,7 @@ export default class Maps extends React.Component {
         }
 
         const title = 'Transactions Records in ' + getMonthYear(month) +
-          ' around selected location';
+          ' <span class="nowrap">around selected location</span>';
         const colNames = [
           '#',
           'Block',

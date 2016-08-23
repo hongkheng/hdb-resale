@@ -12,7 +12,8 @@
     "build:release": "npm run clean && npm run build-server && npm run build-js",
     "clean": "rm -rf server_dist",
     "build-server": "babel server_src --out-dir server_dist",
-    "build-js": "webpack --progress --colors --config ./webpack.prod.config.js"
+    "build-js": "webpack --progress --colors --config ./webpack.prod.config.js",
+    "postinstall": "npm run build:release"
   },
   "contributors": [
     {
@@ -43,7 +44,6 @@
     "babel-preset-react": "^6.11.1",
     "babel-preset-stage-2": "^6.13.0",
     "css-loader": "^0.23.1",
-    "extract-text-webpack-plugin": "^1.0.1",
     "if-env": "^1.0.0",
     "postcss-cssnext": "^2.7.0",
     "postcss-loader": "^0.9.1",

@@ -3,8 +3,8 @@ import devServer from './server.dev';
 
 const port = process.env.PORT || 8080;
 
-const nodeEnv = process.env.NODE_ENV || 'development';
-console.log('node env', nodeEnv);
+const nodeEnv = app.get('env');
+console.log('node_env = ', nodeEnv);
 
 if (nodeEnv === 'development') {
   devServer();

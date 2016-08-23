@@ -54,11 +54,26 @@ export default class Charts extends React.Component {
 
   getTitle (town, chartType) {
     if (chartType === 'Smoothed') {
-      return 'Historial Trend of HDB Resale Prices in ' + capitalizeFirstLetters(town);
+      return (
+        <h1 className='chart-title'>
+          Historial Trend of HDB Resale Prices
+          <span className='nowrap'> in {capitalizeFirstLetters(town)}</span>
+        </h1>
+      );
     } else if (chartType === 'Average') {
-      return 'Historical Average of HDB Resale Prices in ' + capitalizeFirstLetters(town);
+      return (
+        <h1 className='chart-title'>
+          Historical Average of HDB Resale Prices
+          <span className='nowrap'> in {capitalizeFirstLetters(town)}</span>
+        </h1>
+      );
     } else {
-      return 'Range of Transacted Prices in ' + capitalizeFirstLetters(town) + ' (Min, Max & Median)';
+      return (
+        <h1 className='chart-title'>
+          Range of Transacted Prices in {capitalizeFirstLetters(town)}
+          <span className='nowrap'> (Min, Max & Median)</span>
+        </h1>
+      );
     }
   }
 
@@ -216,7 +231,7 @@ export default class Charts extends React.Component {
         console.log(json);
         const title =
           'Transactions Records for ' + capitalizeFirstLetters(flat_type) +
-          ' Flats <span>in ' + capitalizeFirstLetters(town) +
+          ' Flats <span class="nowrap">in ' + capitalizeFirstLetters(town) +
           ' in ' + getMonthYear(date) + '</span>';
         const colNames = [
           '#',
@@ -253,6 +268,7 @@ export default class Charts extends React.Component {
   componentWillReceiveProps (nextProps) {
     if (this.props.selectedTown === nextProps.selectedTown &&
       this.props.selectedChartType === nextProps.selectedChartType) return;
+    console.log('here');
     this.setState({
       table: {
         title: '',
@@ -266,9 +282,7 @@ export default class Charts extends React.Component {
   render () {
     return (
       <main>
-        <h1 className='chart-title'>
-          {this.getTitle(this.props.selectedTown, this.props.selectedChartType)}
-        </h1>
+        {this.getTitle(this.props.selectedTown, this.props.selectedChartType)}
         <div className='chart-container'>
           <div ref='plotContainer' className='js-plotly-plot' />
           <Loader hidden={!this.state.isLoading} />

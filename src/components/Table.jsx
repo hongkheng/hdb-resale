@@ -1,6 +1,14 @@
 import React from 'react';
 
 export default class Table extends React.Component {
+  shouldComponentUpdate (nextProps) {
+    return this.props.title !== nextProps.title;
+  }
+
+  componentDidUpdate () {
+    this.refs.title.scrollIntoView();
+  }
+
   render () {
     const colNames = this.props.colNames.map((colName, i) => (
       <th key={i}>{colName}</th>
