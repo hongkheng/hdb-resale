@@ -50,16 +50,16 @@ class App extends React.Component {
     this.getMeta()
     .then(meta => {
       console.log('meta loaded', meta);
-      const selectedTown = meta.townList.find(t => {
+      const selectedTown = Array.find(meta.townList, t => {
         return serialize(t) === serialize(this.props.params.town);
       }) || meta.townList[0];
-      const selectedMonth = meta.monthList.find(m => {
+      const selectedMonth = Array.find(meta.monthList, m => {
         return serialize(m) === serialize(this.props.params.month);
       }) || meta.monthList[meta.monthList.length - 1];
-      const selectedChartType = this.state.chartType.find(c => {
+      const selectedChartType = Array.find(this.state.chartType, c => {
         return serialize(c) === serialize(this.props.location.query.type);
       }) || 'Smoothed';
-      const selectedFlatType = this.state.flatType.find(f => {
+      const selectedFlatType = Array.find(this.state.flatType, f => {
         return serialize(f) === serialize(this.props.location.query.flat);
       }) || 'ALL';
       this.setState({
@@ -79,16 +79,16 @@ class App extends React.Component {
 
   componentWillReceiveProps (nextProps) {
     const nextState = {};
-    const town = this.state.townList.find(t => {
+    const town = Array.find(this.state.townList, t => {
       return serialize(t) === serialize(nextProps.params.town);
     });
-    const month = this.state.monthList.find(m => {
+    const month = Array.find(this.state.monthList, m => {
       return serialize(m) === serialize(nextProps.params.month);
     });
-    const chart = this.state.chartType.find(c => {
+    const chart = Array.find(this.state.chartType, c => {
       return serialize(c) === serialize(nextProps.location.query.type);
     });
-    const flat = this.state.flatType.find(f => {
+    const flat = Array.find(this.state.flatType, f => {
       return serialize(f) === serialize(nextProps.location.query.flat);
     });
     if (town && town !== this.state.selectedTown) nextState.selectedTown = town;
