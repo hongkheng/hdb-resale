@@ -630,14 +630,6 @@ main {
   bottom: 0;
   left: 50%;
   margin-left: -3.5vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#reset-map::before {
-  height: 1em;
-  width: 1em;
-  font-weight: lighter;
 }
 #prev-month {
   top: 31.5vh;
