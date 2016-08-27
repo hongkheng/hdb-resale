@@ -5,7 +5,7 @@ import sortByOrder from 'lodash.sortbyorder';
 import Table from './Table';
 import IconButton from './IconButton';
 import Loader from './Loader';
-import { capitalizeFirstLetters, getMonthYear } from './helpers.js';
+import { capitalizeFirstLetters, getMonthYear, googleMapsStyles } from './helpers.js';
 
 export default class Maps extends React.Component {
   constructor (props) {
@@ -109,7 +109,7 @@ export default class Maps extends React.Component {
 
   resetMap () {
     this.map.setCenter(this.mapCenter);
-    this.map.setZoom(11);
+    this.map.setZoom(this.mapZoom);
   }
 
   listAllTransactions (lat, lng, month, flat_type) { //eslint-disable-line
@@ -203,11 +203,12 @@ export default class Maps extends React.Component {
   componentDidMount () {
     const initMap = () => {
       this.mapCenter = new google.maps.LatLng(1.352083, 103.819836);
+      this.mapZoom = 12;
       this.map = new google.maps.Map(this.refs.map, {
         center: this.mapCenter,
-        zoom: 11,
+        zoom: this.mapZoom,
         draggableCursor: 'crosshair',
-        scrollwheel: false
+        styles: googleMapsStyles.blueWater
       });
 
       this.heatmap = new google.maps.visualization.HeatmapLayer({
