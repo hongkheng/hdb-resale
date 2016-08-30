@@ -108,8 +108,8 @@ export default class Maps extends React.Component {
   }
 
   resetMap () {
-    this.map.setCenter(this.mapCenter);
-    this.map.setZoom(this.mapZoom);
+    this.map.setCenter(this.googleMapsSettings.center);
+    this.map.setZoom(this.googleMapsSettings.zoom);
   }
 
   listAllTransactions (lat, lng, month, flat_type) { //eslint-disable-line
@@ -202,11 +202,15 @@ export default class Maps extends React.Component {
 
   componentDidMount () {
     const initMap = () => {
-      this.mapCenter = new google.maps.LatLng(1.352083, 103.819836);
-      this.mapZoom = 12;
+      this.googleMapsSettings = {
+        center: new google.maps.LatLng(1.352083, 103.819836),
+        zoom: 11
+      };
       this.map = new google.maps.Map(this.refs.map, {
-        center: this.mapCenter,
-        zoom: this.mapZoom,
+        center: this.googleMapsSettings.center,
+        zoom: this.googleMapsSettings.zoom,
+        minZoom: 11,
+        maxZoom: 15,
         draggableCursor: 'crosshair',
         styles: googleMapsStyles.blueWater
       });
@@ -224,7 +228,7 @@ export default class Maps extends React.Component {
       this.plotHeatmap(this.props.selectedMonth, this.props.selectedFlatType);
     };
     if (window.googleMapsLoaded) initMap();
-    else window.googleOnLoadCallback = initMap();
+    else window.googleOnLoadCallback = initMap;
   }
 
   componentWillReceiveProps (nextProps) {

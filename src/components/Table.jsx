@@ -2,10 +2,11 @@ import React from 'react';
 
 export default class Table extends React.Component {
   shouldComponentUpdate (nextProps) {
-    return this.props.title !== nextProps.title;
+    return this.props.rows !== nextProps.rows;
   }
 
   componentDidUpdate () {
+    console.log('HERE')
     this.refs.title.scrollIntoView();
   }
 
