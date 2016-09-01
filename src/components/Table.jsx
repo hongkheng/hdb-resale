@@ -6,7 +6,6 @@ export default class Table extends React.Component {
   }
 
   componentDidUpdate () {
-    console.log('HERE')
     this.refs.title.scrollIntoView();
   }
 

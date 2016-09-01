@@ -18,33 +18,31 @@ export default class Charts extends React.Component {
       }
     };
 
-    this.layout = {
-      hovermode: 'closest',
-      autosize: true,
-      height: 500,
-      margin: {
-        l: 50,
-        r: 20,
-        t: 50,
-        b: 50,
-        pad: 10
+    this.layout = function () {
+      const layout = {
+        hovermode: 'closest',
+        margin: {
+          l: 50,
+          r: 20,
+          t: 50,
+          b: 50,
+          pad: 10
+        }
+      };
+      if (window.matchMedia('(max-width: 750px)').matches) {
+        layout.legend = {
+          x: 0.08,
+          y: 0.92,
+          xanchor: 'left',
+          yanchor: 'top'
+        };
+      } else {
+        layout.legend = {
+          y: 0.5,
+          yanchor: 'middle'
+        };
       }
-    };
-
-    if (window.matchMedia('(max-width: 900px)').matches) {
-      this.layout.width = 500;
-      this.layout.legend = {
-        x: 0.08,
-        y: 0.92,
-        xanchor: 'left',
-        yanchor: 'top'
-      };
-    } else {
-      this.layout.width = 700;
-      this.layout.legend = {
-        y: 0.5,
-        yanchor: 'middle'
-      };
+      return layout;
     }
 
     this.plotChart = this.plotChart.bind(this);
@@ -203,7 +201,7 @@ export default class Charts extends React.Component {
   renderData (dataObj) {
     if (dataObj._id !== this.props.selectedTown) console.warn('overlapping queries');
     else {
-      Plotly.newPlot(this.refs.plotContainer, dataObj[this.props.selectedChartType], this.layout);
+      Plotly.newPlot(this.refs.plotContainer, dataObj[this.props.selectedChartType], this.layout(), {displayModeBar: false});
       this.refs.plotContainer.on('plotly_click', click => {
         if (!click.points[0].data.name) return;
         this.listAllTransactions(this.props.selectedTown, click.points[0].data.name, click.points[0].x);
@@ -263,12 +261,16 @@ export default class Charts extends React.Component {
 
   componentDidMount () {
     this.plotChart(this.props.selectedTown, this.props.selectedChartType);
+    window.onresize = () => {
+      const layout = this.layout();
+      layout.width = this.refs.plotContainer.getBoundingClientRect().width;
+      Plotly.relayout(this.refs.plotContainer, layout);
+    };
   }
 
   componentWillReceiveProps (nextProps) {
     if (this.props.selectedTown === nextProps.selectedTown &&
       this.props.selectedChartType === nextProps.selectedChartType) return;
-    console.log('here');
     this.setState({
       table: {
         title: '',
@@ -284,7 +286,7 @@ export default class Charts extends React.Component {
       <main>
         {this.getTitle(this.props.selectedTown, this.props.selectedChartType)}
         <div className='chart-container'>
-          <div ref='plotContainer' className='js-plotly-plot' />
+          <div ref='plotContainer' className='plotly-container'/>
           <Loader hidden={!this.state.isLoading} />
         </div>
         <Table {...this.state.table} />
