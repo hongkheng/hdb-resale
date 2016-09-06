@@ -112,7 +112,7 @@ export default class Maps extends React.Component {
     this.map.setZoom(this.googleMapsSettings.zoom);
   }
 
-  listAllTransactions (lat, lng, month, flat_type) { //eslint-disable-line
+  listAllTransactions (lat, lng, radius, month, flat_type) { //eslint-disable-line
     const url = window.location.protocol + '//' + window.location.host + '/nearby';
     window.fetch(url, {
       method: 'POST',
@@ -120,7 +120,7 @@ export default class Maps extends React.Component {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({lat, lng, radius: 500})
+      body: JSON.stringify({lat, lng, radius})
     }).then(res => res.json()).then(json => {
       if (!json.length) {
         this.setState({
@@ -167,7 +167,7 @@ export default class Maps extends React.Component {
           return;
         }
 
-        const title = 'Transactions Records in ' + getMonthYear(month) +
+        const title = records.length + ' transactions in ' + getMonthYear(month) +
           ' <span class="nowrap">around selected location</span>';
         const colNames = [
           '#',
@@ -196,6 +196,16 @@ export default class Maps extends React.Component {
         this.setState({
           table: {title, colNames, rows}
         });
+        this.map.setCenter({lat, lng});
+        this.map.setZoom(15);
+        this.map.setOptions({scrollwheel: false});
+        const scrollToTopListener = (e) => {
+          if (window.scrollY === 0) {
+            window.removeEventListener('scroll', scrollToTopListener);
+            this.map.setOptions({scrollwheel: true});
+          }
+        };
+        window.addEventListener('scroll', scrollToTopListener);
       });
     });
   }
@@ -210,20 +220,34 @@ export default class Maps extends React.Component {
         center: this.googleMapsSettings.center,
         zoom: this.googleMapsSettings.zoom,
         minZoom: 11,
-        maxZoom: 15,
-        draggableCursor: 'crosshair',
+        maxZoom: 16,
         styles: googleMapsStyles.blueWater
       });
-
       this.heatmap = new google.maps.visualization.HeatmapLayer({
         radius: 7
       });
-      this.map.addListener('click', e => {
-        const target = e.latLng;
-        this.listAllTransactions(target.lat(), target.lng(),
+      this.drawing = new google.maps.drawing.DrawingManager({
+        drawingMode: 'circle',
+        drawingControlOptions: {
+          drawingModes: ['circle'],
+          position: google.maps.ControlPosition.TOP_CENTER
+        },
+        circleOptions: {
+          fillColor: 'black',
+          fillOpacity: 0.2,
+          strokeWeight: 0.5,
+          strokeColor: 'black'
+        }
+      });
+      this.drawing.addListener('circlecomplete', c => {
+        const center = c.getCenter();
+        const radius = Math.min(c.getRadius(), 500);
+        this.listAllTransactions(center.lat(), center.lng(), radius,
           this.props.selectedMonth, this.props.selectedFlatType);
+        c.setMap(null);
       });
       this.heatmap.setMap(this.map);
+      this.drawing.setMap(this.map);
 
       this.plotHeatmap(this.props.selectedMonth, this.props.selectedFlatType);
     };
