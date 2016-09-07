@@ -239,6 +239,25 @@ export default class Maps extends React.Component {
           strokeColor: 'black'
         }
       });
+      let panLimits;
+      google.maps.event.addListenerOnce(this.map, 'bounds_changed', () => {
+        const bounds = this.map.getBounds();
+        const sw = bounds.getSouthWest();
+        const ne = bounds.getNorthEast();
+        panLimits = new google.maps.LatLngBounds({
+          lat: sw.lat() * 0.75 + ne.lat() * 0.25,
+          lng: sw.lng() * 0.75 + ne.lng() * 0.25
+        }, {
+          lat: sw.lat() * 0.25 + ne.lat() * 0.75,
+          lng: sw.lng() * 0.25 + ne.lng() * 0.75
+        });
+      });
+      let lastCenter = this.map.getCenter();
+      this.map.addListener('center_changed', () => {
+        const newCenter = this.map.getCenter();
+        if (panLimits.contains(newCenter)) lastCenter = newCenter;
+        else this.map.setCenter(lastCenter);
+      });
       this.drawing.addListener('circlecomplete', c => {
         const center = c.getCenter();
         const radius = Math.min(c.getRadius(), 500);

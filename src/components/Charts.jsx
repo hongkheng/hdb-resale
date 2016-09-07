@@ -43,7 +43,7 @@ export default class Charts extends React.Component {
         };
       }
       return layout;
-    }
+    };
 
     this.plotChart = this.plotChart.bind(this);
     this.renderData = this.renderData.bind(this);
@@ -286,7 +286,7 @@ export default class Charts extends React.Component {
       <main>
         {this.getTitle(this.props.selectedTown, this.props.selectedChartType)}
         <div className='chart-container'>
-          <div ref='plotContainer' className='plotly-container'/>
+          <div ref='plotContainer' className='plotly-container' />
           <Loader hidden={!this.state.isLoading} />
         </div>
         <Table {...this.state.table} />
