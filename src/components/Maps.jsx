@@ -68,7 +68,7 @@ export default class Maps extends React.Component {
       let dataPoints = {};
       for (let result of results) {
         result.dataPoints.forEach(pt => {
-          pt.weight = Math.pow(pt.weight, 1.5);
+          pt[2] = Math.pow(pt[2], 1.5);
         });
         dataPoints[result.flat_type] = result.dataPoints;
       }
@@ -97,8 +97,8 @@ export default class Maps extends React.Component {
     }
 
     const ticks = dataPoints.map(tick => ({
-      location: new google.maps.LatLng(tick.lat, tick.lng),
-      weight: tick.weight
+      location: new google.maps.LatLng(tick[0], tick[1]),
+      weight: tick[2]
     }));
     this.heatmap.setData(ticks);
 

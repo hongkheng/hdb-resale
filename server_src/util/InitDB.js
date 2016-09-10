@@ -1,10 +1,8 @@
-import mongoose from 'mongoose';
-
+import mongoose from 'mongoose'
 mongoose.Promise = Promise
 
 export default class {
   constructor () {
-
     const dbURI = 'mongodb://' +
       process.env.HDBRESALE_MONGODB_USER + ':' +
       process.env.HDBRESALE_MONGODB_PASSWORD + '@' +
@@ -57,13 +55,14 @@ export default class {
       block: String,
       postalCode: Number,
       lng: Number,
-      lat: Number
+      lat: Number,
+      heatmapKeys: [String]
     }))
 
     this.heatmap = mongoose.model('heatmap', new mongoose.Schema({
       flat_type: String,
       month: String,
-      dataPoints: [{lng: Number, lat: Number, weight: Number}]
+      dataPoints: []
     }))
   }
 
