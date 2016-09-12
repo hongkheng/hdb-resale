@@ -64,6 +64,12 @@ export default class {
       month: String,
       dataPoints: []
     }))
+
+    this.choropleth = mongoose.model('choropleth', new mongoose.Schema({
+      flat_type: String,
+      month: String,
+      dataPoints: {}
+    }))
   }
 
   getMeta () {

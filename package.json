@@ -5,15 +5,14 @@
   "main": "index.js",
   "scripts": {
     "start": "if-env NODE_ENV=production && npm run start:prod || npm run start:dev",
-    "start:dev": "npm run build:dev && npm run start-server",
-    "start:prod": "npm run build:release && npm run start-server",
+    "start:dev": "babel-watch server_src/server.js",
+    "start:prod": "npm run build && npm run start-server",
     "start-server": "node server_dist/server.js",
-    "build:dev": "npm run clean && npm run build-server",
-    "build:release": "npm run clean && npm run build-server && npm run build-js",
+    "build": "npm run clean && npm run build-server && npm run build-js",
     "clean": "rm -rf server_dist",
     "build-server": "babel server_src --out-dir server_dist",
     "build-js": "webpack --progress --colors --config ./webpack.prod.config.js",
-    "postinstall": "npm run build:release"
+    "postinstall": "npm run build"
   },
   "contributors": [
     {
@@ -43,6 +42,7 @@
     "babel-preset-es2015": "^6.13.2",
     "babel-preset-react": "^6.11.1",
     "babel-preset-stage-2": "^6.13.0",
+    "babel-watch": "^2.0.2",
     "css-loader": "^0.23.1",
     "if-env": "^1.0.0",
     "postcss-cssnext": "^2.7.0",
