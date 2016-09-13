@@ -28,7 +28,18 @@ db.getAddressBook().then(docs => {
   })
   const regionSubset = regionData.filter(data => heatmapKeys.has(data.key))
   const planningAreaSubset = planningAreaData.filter(data => heatmapKeys.has(data.key))
-  const subzoneSubset = subzoneData.filter(data => heatmapKeys.has(data.key))
+  const subzoneSubset = subzoneData.filter(data => planningAreaSubset.findIndex(
+    area => area.meta.Planning_Area_Code === data.meta.Planning_Area_Code
+  ) >= 0)
+
+  function refreshAddressCache () {
+    if (Date.now() - addressCache.lastUpdate > 24 * 60 * 60 * 1000) {
+      db.getAddressBook.then(docs => {
+        addressCache.lastUpdate = Date.now()
+        addressCache.data = docs
+      })
+    }
+  }
 
   app.use(express.static(root))
 
@@ -93,12 +104,7 @@ db.getAddressBook().then(docs => {
       .filter(a => eucliDist2(toSVY(a.lat, a.lng), point) < r2)
       .reduce((streets, a) => Object.assign(streets, {[a.street]: true}), {})
     res.json(Object.keys(nearbyStreets))
-    if (Date.now() - addressCache.lastUpdate > 24 * 60 * 60 * 1000) {
-      db.getAddressBook.then(docs => {
-        addressCache.lastUpdate = Date.now()
-        addressCache.data = docs
-      })
-    }
+    refreshAddressCache()
   })
 
   app.post('/subzone', function (req, res) {
@@ -107,12 +113,7 @@ db.getAddressBook().then(docs => {
       .filter(a => a.heatmapKeys.indexOf(key) >= 0)
       .reduce((streets, a) => Object.assign(streets, {[a.street]: true}), {})
     res.json(Object.keys(nearbyStreets))
-    if (Date.now() - addressCache.lastUpdate > 24 * 60 * 60 * 1000) {
-      db.getAddressBook.then(docs => {
-        addressCache.lastUpdate = Date.now()
-        addressCache.data = docs
-      })
-    }
+    refreshAddressCache()
   })
 
   app.use(fallback('index.html', { root }))

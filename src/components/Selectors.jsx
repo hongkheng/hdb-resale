@@ -76,3 +76,32 @@ MapSelector.propType = {
   updateMonth: React.PropTypes.func,
   updateFlatType: React.PropTypes.func
 };
+
+export class AreaSelector extends React.Component {
+  render () {
+    return (
+      <div className='listType'>
+        <p className='dropdown-title'>Choose month & flat type</p>
+        <form className='dropdown-list'>
+          <DropDownList
+            selections={this.props.monthList}
+            selectedValue={this.props.selectedMonth}
+            handleChange={this.props.updateMonth2} />
+          <DropDownList
+            selections={this.props.flatType}
+            selectedValue={this.props.selectedFlatType}
+            handleChange={this.props.updateFlatType2} />
+        </form>
+      </div>
+    );
+  }
+}
+
+AreaSelector.propType = {
+  monthList: React.PropTypes.arrayOf(React.PropTypes.string),
+  flatType: React.PropTypes.arrayOf(React.PropTypes.string),
+  selectedMonth: React.PropTypes.string,
+  selectedFlatType: React.PropTypes.string,
+  updateMonth2: React.PropTypes.func,
+  updateFlatType2: React.PropTypes.func
+};

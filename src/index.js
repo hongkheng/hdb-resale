@@ -5,8 +5,9 @@ import { Router, Route, Redirect, IndexRedirect, browserHistory } from 'react-ro
 import App from './components/App';
 import Charts from './components/Charts';
 import Maps from './components/Maps';
+import Areas from './components/Areas';
 import About from './components/About';
-import {ChartSelector, MapSelector} from './components/Selectors';
+import {ChartSelector, MapSelector, AreaSelector} from './components/Selectors';
 
 import './css/style.css';
 
@@ -17,6 +18,7 @@ ReactDOM.render((
     <Route path='/' component={App}>
       <Route path='charts(/:town)' components={{main: Charts, selector: ChartSelector}} />
       <Route path='maps(/:month)' components={{main: Maps, selector: MapSelector}} />
+      <Route path='areas(/:month)' components={{main: Areas, selector: AreaSelector}} />
       <Route path='about' components={{main: About}} />
       <IndexRedirect to='/charts' />
       <Redirect from='*' to='/charts' />

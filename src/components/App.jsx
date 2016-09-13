@@ -18,8 +18,10 @@ class App extends React.Component {
 
     this.updateTown = this.updateTown.bind(this);
     this.updateMonth = this.updateMonth.bind(this);
+    this.updateMonth2 = this.updateMonth2.bind(this);
     this.updateChartType = this.updateChartType.bind(this);
     this.updateFlatType = this.updateFlatType.bind(this);
+    this.updateFlatType2 = this.updateFlatType2.bind(this);
     this.toggleTerms = this.toggleTerms.bind(this);
     this.acceptTerms = this.acceptTerms.bind(this);
   }
@@ -116,6 +118,15 @@ class App extends React.Component {
     });
   }
 
+  updateMonth2 (evt) {
+    const selectedMonth = evt.target.value;
+    if (!selectedMonth) return;
+    this.props.router.push({
+      pathname: '/areas/' + serialize(selectedMonth),
+      query: {flat: serialize(this.state.selectedFlatType)}
+    });
+  }
+
   updateChartType (evt) {
     const selectedChartType = evt.target.value;
     if (!selectedChartType) return;
@@ -134,19 +145,30 @@ class App extends React.Component {
     });
   }
 
+  updateFlatType2 (evt) {
+    const selectedFlatType = evt.target.value;
+    if (!selectedFlatType) return;
+    this.props.router.push({
+      pathname: '/areas/' + serialize(this.state.selectedMonth),
+      query: {flat: serialize(selectedFlatType)}
+    });
+  }
+
   render () {
     const selector = this.state.lastUpdate && (this.props.selector &&
       React.cloneElement(this.props.selector, Object.assign({
         updateTown: this.updateTown,
         updateMonth: this.updateMonth,
+        updateMonth2: this.updateMonth2,
         updateChartType: this.updateChartType,
-        updateFlatType: this.updateFlatType
+        updateFlatType: this.updateFlatType,
+        updateFlatType2: this.updateFlatType2
       }, this.state)));
 
     const main = this.state.lastUpdate && (this.props.main &&
       React.cloneElement(this.props.main, Object.assign({
-        updateTown: this.updateTown,
-        updateMonth: this.updateMonth
+        updateMonth: this.updateMonth,
+        updateMonth2: this.updateMonth2
       }, this.state)));
 
     return (

@@ -15,12 +15,15 @@ export default class Navigation extends React.Component {
       ['chart', serialize(this.props.selectedChartType)]);
     const mapPath = createPath('maps', serialize(this.props.selectedMonth),
       ['flat', serialize(this.props.selectedFlatType)]);
+    const areaPath = createPath('areas', serialize(this.props.selectedMonth),
+      ['flat', serialize(this.props.selectedFlatType)]);
 
     return (
       <header className='header'>
         <ul className='navlist'>
           <li><Link to={chartPath}>Charts</Link></li>
           <li><Link to={mapPath}>Maps</Link></li>
+          <li><Link to={areaPath}>Areas</Link></li>
           <li><Link to='/about'>About</Link></li>
         </ul>
         {this.props.selector}

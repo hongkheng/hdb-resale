@@ -1,5 +1,4 @@
 import React from 'react';
-import 'whatwg-fetch';
 import sortByOrder from 'lodash.sortbyorder';
 import Table from './Table';
 import Loader from './Loader';
@@ -299,5 +298,6 @@ export default class Charts extends React.Component {
 Charts.propType = {
   selectedTown: React.PropTypes.string,
   selectedChartType: React.PropTypes.string,
-  lastUpdate: React.PropTypes.lastUpdate
+  lastUpdate: React.PropTypes.object,
+  db: React.PropTypes.object
 };

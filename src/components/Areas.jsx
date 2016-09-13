@@ -1,12 +1,15 @@
 import React from 'react';
 import sortByOrder from 'lodash.sortbyorder';
+import SgHeatmap from 'sg-heatmap';
+import {insideByKey, register_LATEST} from 'sg-heatmap/dist/helpers'; // eslint-disable-line
+import {YlOrRd} from 'sg-heatmap/dist/helpers/color';
 
 import Table from './Table';
 import IconButton from './IconButton';
 import Loader from './Loader';
 import { capitalizeFirstLetters, getMonthYear, googleMapsStyles } from './helpers.js';
 
-export default class Maps extends React.Component {
+export default class Areas extends React.Component {
   constructor (props) {
     super(props);
 
@@ -19,14 +22,14 @@ export default class Maps extends React.Component {
       }
     };
 
-    this.plotHeatmap = this.plotHeatmap.bind(this);
+    this.plotChoropleth = this.plotChoropleth.bind(this);
     this.renderData = this.renderData.bind(this);
     this.listAllTransactions = this.listAllTransactions.bind(this);
     this.resetMap = this.resetMap.bind(this);
   }
 
-  plotHeatmap (month, flatType) {
-    this.props.db.get('HM' + month)
+  plotChoropleth (month, flatType) {
+    this.props.db.get('CP' + month)
     .then(doc => {
       this.renderData(doc);
       if (doc.lastUpdate < this.props.lastUpdate) {
@@ -41,13 +44,13 @@ export default class Maps extends React.Component {
       }
     })
     .catch(() => {
-      this.heatmap.setMap(null);
+      this.choropleth.mapData.setMap(null);
       this.setState({
         isLoading: true
       });
       this.getData(month).then(dataPoints => {
         const doc = {
-          '_id': 'HM' + month,
+          '_id': 'CP' + month,
           'lastUpdate': this.props.lastUpdate,
           'dataPoints': dataPoints
         };
@@ -61,15 +64,12 @@ export default class Maps extends React.Component {
 
   getData (month) {
     console.log('retrieving data from MongoDB', month);
-    const url = window.location.protocol + '//' + window.location.host + '/heatmap?month=' + month;
+    const url = window.location.protocol + '//' + window.location.host + '/choropleth?month=' + month;
     const headers = { Accept: 'application/json' };
     return window.fetch(url, headers).then(res => res.json()).then(results => {
-      return results.reduce((dataPoints, result) => {
-        result.dataPoints.forEach(pt => {
-          pt[2] = Math.pow(pt[2], 1.5);
-        });
-        return Object.assign(dataPoints, {[result.flat_type]: result.dataPoints});
-      }, {});
+      return results.reduce((dataPoints, result) => (
+        Object.assign(dataPoints, {[result.flat_type]: result.dataPoints})
+      ));
     });
   }
 
@@ -79,22 +79,35 @@ export default class Maps extends React.Component {
       return;
     }
 
-    let dataPoints = [];
+    let dataPoints = {};
     if (this.props.selectedFlatType !== 'ALL') {
       dataPoints = dataObj.dataPoints[this.props.selectedFlatType];
     } else {
       this.props.flatList.forEach(flatType => {
         if (!(flatType in dataObj.dataPoints)) return;
-        dataPoints = dataPoints.concat(dataObj.dataPoints[flatType]);
+        const _dataPoints = dataObj.dataPoints[flatType];
+        Object.keys(_dataPoints).forEach(key => {
+          if (key in dataPoints) {
+            dataPoints[key].sum = dataPoints[key].sum + _dataPoints[key].sum;
+            dataPoints[key].count = dataPoints[key].count + _dataPoints[key].count;
+          } else {
+            dataPoints[key] = {
+              sum: _dataPoints[key].sum,
+              count: _dataPoints[key].count
+            };
+          }
+        });
       });
     }
 
-    const ticks = dataPoints.map(tick => ({
-      location: new google.maps.LatLng(tick[0], tick[1]),
-      weight: tick[2]
-    }));
-    this.heatmap.setData(ticks);
-    this.heatmap.setMap(this.map);
+    this.choropleth.resetState();
+    Object.keys(dataPoints).forEach(key => {
+      this.choropleth.update([key], dataPoints[key].sum / dataPoints[key].count);
+    });
+    const stat = this.choropleth.getStat('latest');
+    const colorScale = YlOrRd([stat.min, stat.max], 0.7);
+    this.choropleth.render('latest', colorScale);
+    this.choropleth.mapData.setMap(this.map);
 
     this.setState({
       isLoading: false
@@ -106,15 +119,15 @@ export default class Maps extends React.Component {
     this.map.setZoom(this.googleMapsSettings.zoom);
   }
 
-  listAllTransactions (lat, lng, radius, month, flat_type) { //eslint-disable-line
-    const url = window.location.protocol + '//' + window.location.host + '/nearby';
+  listAllTransactions (feature, month, flat_type) { //eslint-disable-line
+    const url = window.location.protocol + '//' + window.location.host + '/subzone';
     window.fetch(url, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({lat, lng, radius})
+      body: JSON.stringify({key: feature.getId()})
     }).then(res => res.json()).then(json => {
       if (!json.length) {
         this.setState({
@@ -124,7 +137,7 @@ export default class Maps extends React.Component {
             rows: []
           }
         });
-        console.log('No result around selected location');
+        console.log('No result in selected area');
         return;
       }
 
@@ -157,12 +170,13 @@ export default class Maps extends React.Component {
               rows: []
             }
           });
-          console.log('No result around selected location');
+          console.log('No result in selected area');
           return;
         }
 
-        const title = records.length + ' transaction' + (records.length > 1 ? 's' : '') +
-          ' in ' + getMonthYear(month) + ' <span class="nowrap">around selected location</span>';
+        const title = feature.getProperty('meta').Subzone_Name + ' has ' +
+          records.length + ' transaction' + (records.length > 1 ? 's' : '') +
+          ' <span class="nowrap">in ' + getMonthYear(month) + '</span>';
         const colNames = [
           '#',
           'Block',
@@ -190,8 +204,6 @@ export default class Maps extends React.Component {
         this.setState({
           table: {title, colNames, rows}
         });
-        this.map.setCenter({lat, lng});
-        this.map.setZoom(15);
         this.map.setOptions({scrollwheel: false});
         const scrollToTopListener = (e) => {
           if (window.scrollY === 0) {
@@ -217,22 +229,6 @@ export default class Maps extends React.Component {
         maxZoom: 16,
         styles: googleMapsStyles.blueWater
       });
-      this.heatmap = new google.maps.visualization.HeatmapLayer({
-        radius: 7
-      });
-      this.drawing = new google.maps.drawing.DrawingManager({
-        drawingMode: 'circle',
-        drawingControlOptions: {
-          drawingModes: ['circle'],
-          position: google.maps.ControlPosition.TOP_CENTER
-        },
-        circleOptions: {
-          fillColor: 'black',
-          fillOpacity: 0.2,
-          strokeWeight: 0.5,
-          strokeColor: 'black'
-        }
-      });
       let panLimits;
       google.maps.event.addListenerOnce(this.map, 'bounds_changed', () => {
         const bounds = this.map.getBounds();
@@ -252,16 +248,29 @@ export default class Maps extends React.Component {
         if (panLimits.contains(newCenter)) lastCenter = newCenter;
         else this.map.setCenter(lastCenter);
       });
-      this.drawing.addListener('circlecomplete', c => {
-        const center = c.getCenter();
-        const radius = Math.min(c.getRadius(), 500);
-        this.listAllTransactions(center.lat(), center.lng(), radius,
-          this.props.selectedMonth, this.props.selectedFlatType);
-        c.setMap(null);
-      });
-      this.drawing.setMap(this.map);
 
-      this.plotHeatmap(this.props.selectedMonth, this.props.selectedFlatType);
+      const url = window.location.protocol + '//' + window.location.host + '/choropleth/subzone';
+      window.fetch(url, {
+        method: 'POST',
+        header: {Accept: 'application/json'}
+      }).then(res => res.json()).then(results => {
+        this.choropleth = new SgHeatmap(results);
+        insideByKey(this.choropleth);
+        register_LATEST(this.choropleth);
+        this.choropleth
+          .initializeRenderer({
+            strokeWeight: 1,
+            strokeColor: 'black',
+            strokeOpacity: 1,
+            fillColor: 'white',
+            fillOpacity: 0.7
+          })
+          .addListener('click', event => {
+            this.listAllTransactions(event.feature,
+              this.props.selectedMonth, this.props.selectedFlatType);
+          });
+        this.plotChoropleth(this.props.selectedMonth, this.props.selectedFlatType);
+      });
     };
     if (window.googleMapsLoaded) initMap();
     else window.googleOnLoadCallback = initMap;
@@ -277,7 +286,7 @@ export default class Maps extends React.Component {
         rows: []
       }
     });
-    this.plotHeatmap(nextProps.selectedMonth, nextProps.selectedFlatType);
+    this.plotChoropleth(nextProps.selectedMonth, nextProps.selectedFlatType);
   }
 
   render () {
@@ -297,9 +306,9 @@ export default class Maps extends React.Component {
           <IconButton id='reset-map' icon='fa-crosshairs'
             handleClick={this.resetMap} />
           <IconButton id='prev-month' icon='fa-angle-left'
-            value={prevMonth} handleClick={this.props.updateMonth} />
+            value={prevMonth} handleClick={this.props.updateMonth2} />
           <IconButton id='next-month' icon='fa-angle-right'
-            value={nextMonth} handleClick={this.props.updateMonth} />
+            value={nextMonth} handleClick={this.props.updateMonth2} />
         </div>
         <Table {...this.state.table} />
       </main>
@@ -307,11 +316,12 @@ export default class Maps extends React.Component {
   }
 }
 
-Maps.propType = {
+Areas.propType = {
   selectedMonth: React.PropTypes.string,
   selectedFlatType: React.PropTypes.string,
   lastUpdate: React.PropTypes.object,
+  db: React.PropTypes.object,
   monthList: React.PropTypes.arrayOf(React.PropTypes.string),
   flatList: React.PropTypes.arrayOf(React.PropTypes.string),
-  updateMonth: React.PropTypes.func
+  updateMonth2: React.PropTypes.func
 };
