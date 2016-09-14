@@ -45,7 +45,10 @@ class App extends React.Component {
     console.log('retrieving data from MongoDB in index.js');
     const url = window.location.protocol + '//' + window.location.host + '/list';
     const headers = { Accept: 'application/json' };
-    return window.fetch(url, headers).then(res => res.json());
+    return window.fetch(url, headers).then(res => res.json()).then(meta => {
+      window.sessionStorage.setItem('meta', JSON.stringify(meta));
+      return meta;
+    });
   }
 
   componentDidMount () {
@@ -74,7 +77,6 @@ class App extends React.Component {
         flatList: meta.flatList,
         monthList: meta.monthList
       });
-      window.sessionStorage.setItem('meta', JSON.stringify(meta));
     })
     .catch(console.error.bind(console));
   }

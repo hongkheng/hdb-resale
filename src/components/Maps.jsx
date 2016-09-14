@@ -262,6 +262,9 @@ export default class Maps extends React.Component {
       this.drawing.setMap(this.map);
 
       this.plotHeatmap(this.props.selectedMonth, this.props.selectedFlatType);
+      window.onresize = () => {
+        this.resetMap();
+      };
     };
     if (window.googleMapsLoaded) initMap();
     else window.googleOnLoadCallback = initMap;

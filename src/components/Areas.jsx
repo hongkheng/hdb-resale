@@ -28,6 +28,21 @@ export default class Areas extends React.Component {
     this.resetMap = this.resetMap.bind(this);
   }
 
+  getChoroplethTemplate () {
+    const template = JSON.parse(window.sessionStorage.getItem('choropleth'));
+    if (template) return Promise.resolve(template);
+
+    console.log('retrieving data from MongoDB choropleth template');
+    const url = window.location.protocol + '//' + window.location.host + '/choropleth/subzone';
+    return window.fetch(url, {
+      method: 'POST',
+      header: {Accept: 'application/json'}
+    }).then(res => res.json()).then(template => {
+      window.sessionStorage.setItem('choropleth', JSON.stringify(template));
+      return template;
+    });
+  }
+
   plotChoropleth (month, flatType) {
     this.props.db.get('CP' + month)
     .then(doc => {
@@ -174,8 +189,8 @@ export default class Areas extends React.Component {
           return;
         }
 
-        const title = feature.getProperty('meta').Subzone_Name + ' has ' +
-          records.length + ' transaction' + (records.length > 1 ? 's' : '') +
+        const title = capitalizeFirstLetters(feature.getProperty('meta').Subzone_Name) +
+          ' has ' + records.length + ' transaction' + (records.length > 1 ? 's' : '') +
           ' <span class="nowrap">in ' + getMonthYear(month) + '</span>';
         const colNames = [
           '#',
@@ -249,12 +264,8 @@ export default class Areas extends React.Component {
         else this.map.setCenter(lastCenter);
       });
 
-      const url = window.location.protocol + '//' + window.location.host + '/choropleth/subzone';
-      window.fetch(url, {
-        method: 'POST',
-        header: {Accept: 'application/json'}
-      }).then(res => res.json()).then(results => {
-        this.choropleth = new SgHeatmap(results);
+      this.getChoroplethTemplate().then(template => {
+        this.choropleth = new SgHeatmap(template);
         insideByKey(this.choropleth);
         register_LATEST(this.choropleth);
         this.choropleth
@@ -270,6 +281,9 @@ export default class Areas extends React.Component {
               this.props.selectedMonth, this.props.selectedFlatType);
           });
         this.plotChoropleth(this.props.selectedMonth, this.props.selectedFlatType);
+        window.onresize = () => {
+          this.resetMap();
+        };
       });
     };
     if (window.googleMapsLoaded) initMap();
